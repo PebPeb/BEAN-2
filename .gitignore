@@ -5,7 +5,6 @@
 # GTKWave
 *.out
 *.vcd
-*.gtkw
 *.xlsx#
 
 RISC-V-Programs/

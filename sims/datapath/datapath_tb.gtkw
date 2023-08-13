@@ -1,0 +1,62 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Sun Aug 13 04:36:47 2023
+[*]
+[dumpfile] "/home/developer/Documents/web/BEAN-2/sims/datapath/datapath_tb.vcd"
+[dumpfile_mtime] "Sun Aug 13 04:25:13 2023"
+[dumpfile_size] 18160
+[savefile] "/home/developer/Documents/web/BEAN-2/sims/datapath/datapath_tb.gtkw"
+[timestart] 0
+[size] 3743 1531
+[pos] -1 -1
+*-2.270154 8 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] datapath_tb.
+[treeopen] datapath_tb.DUT.
+[sst_width] 388
+[signals_width] 493
+[sst_expanded] 1
+[sst_vpaned_height] 443
+@28
+datapath_tb.DUT.clk
+datapath_tb.DUT.reset
+@22
+datapath_tb.instruction_mem.rd[31:0]
+datapath_tb.instruction_mem.a[31:0]
+datapath_tb.DUT.pc[31:0]
+@200
+-
+-Fetch
+@22
+datapath_tb.DUT.pc_plus4_F[31:0]
+datapath_tb.DUT.pc_F[31:0]
+datapath_tb.DUT.instr_F[31:0]
+@200
+-Decode
+@22
+datapath_tb.DUT.pc_plus4_D[31:0]
+datapath_tb.DUT.pc_D[31:0]
+datapath_tb.DUT.instr_D[31:0]
+@200
+-Execute
+@23
+datapath_tb.DUT.pc_plus4_E[31:0]
+@200
+-Memory
+-Write Back
+-
+-
+-
+@22
+datapath_tb.DUT.regFILE.\x[1][31:0]
+datapath_tb.DUT.regFILE.\x[2][31:0]
+datapath_tb.DUT.regFILE.\x[3][31:0]
+datapath_tb.DUT.regFILE.\x[4][31:0]
+datapath_tb.DUT.regFILE.\x[5][31:0]
+datapath_tb.DUT.regFILE.\x[6][31:0]
+datapath_tb.DUT.regFILE.\x[7][31:0]
+datapath_tb.DUT.regFILE.\x[8][31:0]
+datapath_tb.DUT.regFILE.\x[9][31:0]
+datapath_tb.DUT.regFILE.\x[10][31:0]
+datapath_tb.DUT.regFILE.\x[11][31:0]
+[pattern_trace] 1
+[pattern_trace] 0

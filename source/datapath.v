@@ -82,20 +82,20 @@ module datapath(
   
   wire            invrt_clk;
   wire [31:0]     rdout1_D, rdout2_D, wrs3;
-  wire [31:0]     ExtImm_D
+  wire [31:0]     ExtImm_D;
 
 
   // REG_decode
   always @(posedge clk, posedge reset) begin
       if (reset) begin
-        pc_plus4_D = 0;
-        pc_D = 0;
-        instr_D = 0;
+        pc_plus4_D <= 0;
+        pc_D <= 0;
+        instr_D <= 0;
       end
       else begin
-        pc_plus4_D = pc_plus4_F;
-        pc_D = pc_F;
-        instr_D = instr_F;
+        pc_plus4_D <= pc_plus4_F;
+        pc_D <= pc_F;
+        instr_D <= instr_F;
       end
   end
 
@@ -136,18 +136,18 @@ module datapath(
   // REG_execute
   always @(posedge clk, posedge reset) begin
     if (reset) begin
-      pc_E = 0;
-      pc_plus4_E = 0;
-      ExtImm_E = 0;
-      rdout1_E = 0;
-      rdout2_E = 0;
+      pc_E <= 0;
+      pc_plus4_E <= 0;
+      ExtImm_E <= 0;
+      rdout1_E <= 0;
+      rdout2_E <= 0;
     end
     else begin
-      pc_E = pc_D;
-      pc_plus4_E = pc_plus4_D;
-      ExtImm_E = ExtImm_D;
-      rdout1_E = rdout1_D;
-      rdout2_E = rdout2_D;
+      pc_E <= pc_D;
+      pc_plus4_E <= pc_plus4_D;
+      ExtImm_E <= ExtImm_D;
+      rdout1_E <= rdout1_D;
+      rdout2_E <= rdout2_D;
     end
   end
 
@@ -193,18 +193,18 @@ module datapath(
   // REG_memory
   always @(posedge clk, posedge reset) begin
     if (reset) begin
-      pc_plus4_M = 0;
-      pcPlusImm_M = 0;
-      rdout2_M = 0;
-      ExtImm_M = 0;
-      ALUResults_M = 0;
+      pc_plus4_M <= 0;
+      pcPlusImm_M <= 0;
+      rdout2_M <= 0;
+      ExtImm_M <= 0;
+      ALUResults_M <= 0;
     end
     else begin
-      ExtImm_M = ExtImm_E;
-      pc_plus4_M = pc_plus4_E;
-      pcPlusImm_M = pcPlusImm_E;
-      rdout2_M = rdout2_E;
-      ALUResults_M = ALUResults_E;
+      ExtImm_M <= ExtImm_E;
+      pc_plus4_M <= pc_plus4_E;
+      pcPlusImm_M <= pcPlusImm_E;
+      rdout2_M <= rdout2_E;
+      ALUResults_M <= ALUResults_E;
     end
   end
 
@@ -223,6 +223,8 @@ module datapath(
 
 
 
+
+
   // ----------------------------- //
   // Write Back
   // ----------------------------- //
@@ -233,16 +235,16 @@ module datapath(
   // REG_writeback
   always @(posedge clk, posedge reset) begin
     if (reset) begin
-      pc_plus4_WB = 0;
-      memData_WB = 0;
-      ALUResults_WB = 0;
-      ExtImm_WB = 0;
+      pc_plus4_WB <= 0;
+      memData_WB <= 0;
+      ALUResults_WB <= 0;
+      ExtImm_WB <= 0;
     end
     else begin
-      pc_plus4_WB = pc_plus4_M;
-      memData_WB = memData_M;
-      ALUResults_WB = ALUResults_M;
-      ExtImm_WB = ExtImm_M;
+      pc_plus4_WB <= pc_plus4_M;
+      memData_WB <= memData_M;
+      ALUResults_WB <= ALUResults_M;
+      ExtImm_WB <= ExtImm_M;
     end
   end
 
