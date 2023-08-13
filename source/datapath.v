@@ -16,6 +16,8 @@ module datapath(
   clk, reset,
   reg_WE,
   rs1_SEL, rs2_SEL,
+  stall_D, stall_E, stall_M, stall_WB,
+  flush_D, flush_E, flush_M, flush_WB,
   pc_SEL, reg_SEL,
   imm_SEL,
   ALU_SEL,
@@ -27,6 +29,8 @@ module datapath(
   input             clk, reset;
   input             reg_WE;
   input             rs1_SEL, rs2_SEL;
+  input             stall_D, stall_E, stall_M, stall_WB;
+  input             flush_D, flush_E, flush_M, flush_WB;
   input [1:0]       pc_SEL, reg_SEL;
   input [2:0]       imm_SEL;
   input [3:0]       ALU_SEL;
@@ -81,18 +85,22 @@ module datapath(
   reg [31:0]      pc_plus4_D = 0, pc_D = 0, instr_D = 0;
   
   wire            invrt_clk;
+  wire [4:0]      rs3_D;
   wire [31:0]     rdout1_D, rdout2_D, wrs3;
   wire [31:0]     ExtImm_D;
 
+  wire            en_D, reset_D;
+  assign en_D = ~stall_D;
+  assign reset_D = reset | flush_D;
 
   // REG_decode
-  always @(posedge clk, posedge reset) begin
-      if (reset) begin
+  always @(posedge clk, posedge reset_D) begin
+      if (reset_D) begin
         pc_plus4_D <= 0;
         pc_D <= 0;
         instr_D <= 0;
       end
-      else begin
+      else if (en_D) begin
         pc_plus4_D <= pc_plus4_F;
         pc_D <= pc_F;
         instr_D <= instr_F;
@@ -105,12 +113,13 @@ module datapath(
       .rs1(instr_D[19:15]),
       .rs2(instr_D[24:20]),
       .wrs3(wrs3),
-      .rd(instr_D[11:7]),
+      .rs3(rs3_WB),
       .we(reg_WE),
       .clk(invrt_clk),
       .reset(reset),
       .rdout1(rdout1_D),
       .rdout2(rdout2_D));
+  assign rs3_D = instr_D[11:7];
 
   extend extendImm(
       .Instr(instr_D[31:7]), 
@@ -128,26 +137,33 @@ module datapath(
   
   reg [31:0]      pc_plus4_E = 0, pc_E = 0, ExtImm_E = 0;
   reg [31:0]      rdout1_E = 0, rdout2_E = 0;
+  reg [4:0]       rs3_E = 0;
 
   wire [31:0]     muxrs1, muxrs2;
   wire [31:0]     ALUResults_E;
   wire [31:0]     pcPlusImm_E;
 
+  wire            en_E, reset_E;
+  assign en_E = ~stall_E;
+  assign reset_E = reset | flush_E;
+
   // REG_execute
-  always @(posedge clk, posedge reset) begin
-    if (reset) begin
+  always @(posedge clk, posedge reset_E) begin
+    if (reset_E) begin
       pc_E <= 0;
       pc_plus4_E <= 0;
       ExtImm_E <= 0;
       rdout1_E <= 0;
       rdout2_E <= 0;
+      rs3_E <= 0;
     end
-    else begin
+    else if (en_E) begin
       pc_E <= pc_D;
       pc_plus4_E <= pc_plus4_D;
       ExtImm_E <= ExtImm_D;
       rdout1_E <= rdout1_D;
       rdout2_E <= rdout2_D;
+      rs3_E <= rs3_D;
     end
   end
 
@@ -185,26 +201,32 @@ module datapath(
 
   reg [31:0]      pc_plus4_M = 0, pcPlusImm_M = 0, ExtImm_M = 0;
   reg [31:0]      rdout2_M = 0, ALUResults_M = 0;
+  reg [4:0]       rs3_M = 0;
 
   wire [31:0]     pc_jump;
   wire [31:0]     memData_M;
 
+  wire            en_M, reset_M;
+  assign en_M = ~stall_M;
+  assign reset_M = reset | flush_M;
 
   // REG_memory
-  always @(posedge clk, posedge reset) begin
-    if (reset) begin
+  always @(posedge clk, posedge reset_M) begin
+    if (reset_M) begin
       pc_plus4_M <= 0;
       pcPlusImm_M <= 0;
       rdout2_M <= 0;
       ExtImm_M <= 0;
       ALUResults_M <= 0;
+      rs3_M <= 0;
     end
-    else begin
+    else if (en_M) begin
       ExtImm_M <= ExtImm_E;
       pc_plus4_M <= pc_plus4_E;
       pcPlusImm_M <= pcPlusImm_E;
       rdout2_M <= rdout2_E;
       ALUResults_M <= ALUResults_E;
+      rs3_M <= rs3_E;
     end
   end
 
@@ -231,20 +253,27 @@ module datapath(
 
   reg [31:0]      pc_plus4_WB = 0, memData_WB = 0, ALUResults_WB = 0;
   reg [31:0]      ExtImm_WB = 0;
+  reg [4:0]       rs3_WB = 0;
+
+  wire            en_WB, reset_WB;
+  assign en_WB = ~stall_WB;
+  assign reset_WB = reset | flush_WB;
 
   // REG_writeback
-  always @(posedge clk, posedge reset) begin
-    if (reset) begin
+  always @(posedge clk, posedge reset_WB) begin
+    if (reset_WB) begin
       pc_plus4_WB <= 0;
       memData_WB <= 0;
       ALUResults_WB <= 0;
       ExtImm_WB <= 0;
+      rs3_WB <= 0;
     end
-    else begin
+    else if (en_WB) begin
       pc_plus4_WB <= pc_plus4_M;
       memData_WB <= memData_M;
       ALUResults_WB <= ALUResults_M;
       ExtImm_WB <= ExtImm_M;
+      rs3_WB <= rs3_M;
     end
   end
 

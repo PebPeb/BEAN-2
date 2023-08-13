@@ -39,7 +39,16 @@ module datapath_tb();
     .memDataRD(memDataRD),
     .pc(pc),
     .memDataWD(memDataWD), 
-    .memAdrs(memAdrs)
+    .memAdrs(memAdrs),
+
+    .stall_D(1'b0),
+    .stall_E(1'b0), 
+    .stall_M(1'b0), 
+    .stall_WB(1'b0),
+    .flush_D(1'b0), 
+    .flush_E(1'b0), 
+    .flush_M(1'b0), 
+    .flush_WB(1'b0)
   );
 
   imem instruction_mem (

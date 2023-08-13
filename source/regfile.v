@@ -8,13 +8,13 @@
 //	By: Bryce Keen	
 //	Created: 09/29/2022
 // -------------------------------- //
-//	Last Modified: 01/19/2023
+//	Last Modified: 08/13/2023
 
-// Change Log:	NA
+// Change Log:	rd -> rs3
 
-module regfile(rs1, rs2, wrs3, rd, we, clk, reset, rdout1, rdout2);
+module regfile(rs1, rs2, wrs3, rs3, we, clk, reset, rdout1, rdout2);
 	input wire 				clk, we, reset;
-	input wire [4:0]		rs1, rs2, rd;
+	input wire [4:0]		rs1, rs2, rs3;
 	input wire [31:0]		wrs3;
 	output wire [31:0]		rdout1, rdout2;
 	
@@ -30,8 +30,8 @@ module regfile(rs1, rs2, wrs3, rd, we, clk, reset, rdout1, rdout2);
 				x[i] <= 0;
 			end
 		end
-		else if (we & (rd != 0)) begin			// Write enable and can not overwrite x0
-			x[rd] <= wrs3;						// Store wrs3 to rd register
+		else if (we & (rs3 != 0)) begin			// Write enable and can not overwrite x0
+			x[rs3] <= wrs3;						// Store wrs3 to rs3 register
 		end 
 	
 	end
