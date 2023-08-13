@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2023-08-13T21:08:31.844Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="yLj4fOSVnFtaNJ_iHpKx" version="21.2.1" type="device" pages="3">
+<mxfile host="Electron" modified="2023-08-13T21:42:31.146Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="RkKyE7KmCcSITa2LVCY5" version="21.2.1" type="device" pages="3">
   <diagram name="BEAN-2" id="9CsQqnF67Xx-HxVxIe6X">
     <mxGraphModel dx="2155" dy="1243" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -1171,6 +1171,22 @@
             </Array>
           </mxGeometry>
         </mxCell>
+        <mxCell id="AoTYrAWYR1Cbq0Yng3dp-2" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;labelBackgroundColor=default;strokeColor=#4172A3;strokeWidth=3;fontFamily=Helvetica;fontSize=12;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="SmaIsw5YmcCAqz_-ftx9-1" source="xBVRwJ4cS3OUL2cmFCJP-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1060" y="-80" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="680" y="-80" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AoTYrAWYR1Cbq0Yng3dp-3" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;labelBackgroundColor=default;strokeColor=#4172A3;strokeWidth=3;fontFamily=Helvetica;fontSize=12;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="SmaIsw5YmcCAqz_-ftx9-1" source="xBVRwJ4cS3OUL2cmFCJP-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1060" y="-100" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="680" y="-100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="xBVRwJ4cS3OUL2cmFCJP-10" value="" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillStyle=solid;strokeColor=#4172A3;strokeWidth=3;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=default;gradientColor=none;gradientDirection=east;" vertex="1" parent="SmaIsw5YmcCAqz_-ftx9-1">
           <mxGeometry x="623" y="-120" width="57" height="240" as="geometry" />
         </mxCell>
@@ -1223,6 +1239,14 @@
         </UserObject>
         <mxCell id="xBVRwJ4cS3OUL2cmFCJP-31" value="&lt;div style=&quot;&quot;&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;&lt;b&gt;pc_control&lt;/b&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;points=[];fontSize=16;" vertex="1" parent="SmaIsw5YmcCAqz_-ftx9-1">
           <mxGeometry x="913.27" y="92" width="83.73" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="AoTYrAWYR1Cbq0Yng3dp-0" value="&lt;font color=&quot;#ff33ff&quot;&gt;dmem_WE&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Helvetica;fontColor=default;" vertex="1" connectable="0" parent="SmaIsw5YmcCAqz_-ftx9-1">
+          <mxGeometry x="1086" y="-70" as="geometry">
+            <mxPoint x="18" y="-6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AoTYrAWYR1Cbq0Yng3dp-1" value="&lt;font color=&quot;#ff33ff&quot;&gt;dmem_SEL&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Helvetica;fontColor=default;" vertex="1" connectable="0" parent="SmaIsw5YmcCAqz_-ftx9-1">
+          <mxGeometry x="1106" y="-100" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
