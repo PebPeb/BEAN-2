@@ -16,8 +16,8 @@ module datapath(
   clk, reset,
   reg_WE,
   rs1_SEL, rs2_SEL,
-  stall_D, stall_E, stall_M, stall_WB,
-  flush_D, flush_E, flush_M, flush_WB,
+  stall_F, stall_D, stall_E, stall_M, stall_WB,
+  flush_F, flush_D, flush_E, flush_M, flush_WB,
   pc_SEL, reg_SEL,
   imm_SEL,
   ALU_SEL,
@@ -29,8 +29,8 @@ module datapath(
   input             clk, reset;
   input             reg_WE;
   input             rs1_SEL, rs2_SEL;
-  input             stall_D, stall_E, stall_M, stall_WB;
-  input             flush_D, flush_E, flush_M, flush_WB;
+  input             stall_F, stall_D, stall_E, stall_M, stall_WB;
+  input             flush_F, flush_D, flush_E, flush_M, flush_WB;
   input [1:0]       pc_SEL, reg_SEL;
   input [2:0]       imm_SEL;
   input [3:0]       ALU_SEL;
@@ -51,17 +51,25 @@ module datapath(
   wire [31:0]     pc_plus4_F, pc_F, instr_F;
   wire [31:0]     pc_now, pc_next;
 
+  wire            en_F, reset_F;
+  assign en_F = ~stall_F;
+  assign reset_F = reset | flush_F;
+
+  // REG_fetch
+
+
   mux2 #(.WIDTH(32)) MUX_pc_0 (
     .a(pc_plus4_F), 
     .b(pc_jump), 
     .sel(pc_SEL[0]), 
     .y(pc_now));
 
-  flopr #(.WIDTH(32)) REG_pc (
+  flopren #(.WIDTH(32)) REG_fetch (
       .d(pc_now), 
       .q(pc_next), 
       .clk(clk), 
-      .reset(reset));
+      .enable(en_F),
+      .reset(reset_F));
 
   adder #(.WIDTH(32)) plus4 (
     .a(4), 
@@ -95,16 +103,16 @@ module datapath(
 
   // REG_decode
   always @(posedge clk, posedge reset_D) begin
-      if (reset_D) begin
-        pc_plus4_D <= 0;
-        pc_D <= 0;
-        instr_D <= 0;
-      end
-      else if (en_D) begin
-        pc_plus4_D <= pc_plus4_F;
-        pc_D <= pc_F;
-        instr_D <= instr_F;
-      end
+    if (reset_D) begin
+      pc_plus4_D <= 0;
+      pc_D <= 0;
+      instr_D <= 0;
+    end
+    else if (en_D) begin
+      pc_plus4_D <= pc_plus4_F;
+      pc_D <= pc_F;
+      instr_D <= instr_F;
+    end
   end
 
   assign invrt_clk = ~clk;

@@ -41,10 +41,12 @@ module datapath_tb();
     .memDataWD(memDataWD), 
     .memAdrs(memAdrs),
 
+    .stall_F(1'b0),
     .stall_D(1'b0),
     .stall_E(1'b0), 
     .stall_M(1'b0), 
     .stall_WB(1'b0),
+    .flush_F(1'b0), 
     .flush_D(1'b0), 
     .flush_E(1'b0), 
     .flush_M(1'b0), 
