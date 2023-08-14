@@ -24,7 +24,10 @@ module datapath(
   Instr,
   memDataRD,
   pc,
-  memDataWD, memAdrs);
+  memDataWD, memAdrs,
+  opcode, funct7,
+  funct3,
+  jump);
 
   input             clk, reset;
   input             reg_WE;
@@ -39,10 +42,9 @@ module datapath(
 
   output [31:0]     pc;
   output [31:0]     memDataWD, memAdrs;
-
-
-
-
+  output [6:0]      opcode, funct7;
+  output [2:0]      funct3;
+  output            jump;
 
   // ----------------------------- //
   // Fetch
@@ -136,7 +138,9 @@ module datapath(
   
 
 
-
+  assign opcode = instr_D[6:0];
+  assign funct3 = instr_D[14:12];
+  assign funct7 = instr_D[31:25];
 
 
   // ----------------------------- //
@@ -199,6 +203,7 @@ module datapath(
       .y(pcPlusImm_E));
 
 
+    assign jump = ALUResults_E[0];
 
 
 
