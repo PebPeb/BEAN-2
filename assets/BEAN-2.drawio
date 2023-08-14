@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2023-08-13T21:42:31.146Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="RkKyE7KmCcSITa2LVCY5" version="21.2.1" type="device" pages="3">
+<mxfile host="Electron" modified="2023-08-14T02:54:08.378Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="a6AzyiLazy0kQJrk04e0" version="21.2.1" type="device" pages="3">
   <diagram name="BEAN-2" id="9CsQqnF67Xx-HxVxIe6X">
     <mxGraphModel dx="2155" dy="1243" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -1190,7 +1190,7 @@
         <mxCell id="xBVRwJ4cS3OUL2cmFCJP-10" value="" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillStyle=solid;strokeColor=#4172A3;strokeWidth=3;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=default;gradientColor=none;gradientDirection=east;" vertex="1" parent="SmaIsw5YmcCAqz_-ftx9-1">
           <mxGeometry x="623" y="-120" width="57" height="240" as="geometry" />
         </mxCell>
-        <mxCell id="xBVRwJ4cS3OUL2cmFCJP-11" value="&lt;div style=&quot;&quot;&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;&lt;b&gt;Control_SEL&lt;/b&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;points=[];fontSize=16;" vertex="1" parent="SmaIsw5YmcCAqz_-ftx9-1">
+        <mxCell id="xBVRwJ4cS3OUL2cmFCJP-11" value="&lt;div style=&quot;&quot;&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;&lt;b&gt;control_unit&lt;/b&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;points=[];fontSize=16;" vertex="1" parent="SmaIsw5YmcCAqz_-ftx9-1">
           <mxGeometry x="609.64" y="-150" width="83.73" height="28" as="geometry" />
         </mxCell>
         <mxCell id="xBVRwJ4cS3OUL2cmFCJP-12" value="&lt;div style=&quot;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;&lt;font color=&quot;#ff33ff&quot; style=&quot;font-size: 10px;&quot;&gt;reg_WE&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;points=[];fontSize=16;rotation=0;" vertex="1" parent="SmaIsw5YmcCAqz_-ftx9-1">
