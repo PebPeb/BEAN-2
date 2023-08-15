@@ -14,6 +14,7 @@ module control_logic_tb();
   wire dmem_WE;
   wire [1:0] pc_SEL;
   wire [1:0] reg_SEL;
+  wire [1:0] reg_RD;
   wire [2:0] imm_SEL;
   wire [2:0] dmem_SEL;
   wire [3:0] ALU_SEL;
@@ -72,6 +73,7 @@ module control_logic_tb();
     .imm_SEL(imm_SEL), 
     .reg_SEL(reg_SEL), 
     .pc_SEL(pc_SEL), 
+    .reg_RD(reg_RD),
     .dmem_WE(dmem_WE), 
     .reg_WE(reg_WE), 
     .rs1_SEL(rs1_SEL), 

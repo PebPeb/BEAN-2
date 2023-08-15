@@ -12,7 +12,7 @@
 
 
 module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL, 
-                     imm_SEL, reg_SEL, pc_SEL, dmem_WE, 
+                     imm_SEL, reg_SEL, pc_SEL, reg_RD, dmem_WE, 
                      reg_WE, rs1_SEL, rs2_SEL, clk, reset,
                      stall_E, stall_M, stall_WB,
                      flush_E, flush_M, flush_WB);
@@ -27,6 +27,7 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
   output wire [3:0]    ALU_SEL;
   output wire [2:0]    dmem_SEL, imm_SEL;
   output wire [1:0]    reg_SEL, pc_SEL; 
+  output wire [1:0]    reg_RD;
   output wire          dmem_WE, reg_WE, rs1_SEL, rs2_SEL;
 
   // assign opcode = inst[6:0];
@@ -62,6 +63,7 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
       .rs2_SEL(rs2_SEL_D),
       .reg_SEL(reg_SEL_D),
       .pc_SEL(pc_SEL_D),
+      .reg_RD(reg_RD),
       .imm_SEL(imm_SEL_D),
       .ALU_SEL(ALU_SEL_D),
       .pc_cond(pc_cond_D),
@@ -211,6 +213,7 @@ module control_unit(
     rs2_SEL,
     reg_SEL,
     pc_SEL,
+    reg_RD,
     imm_SEL,
     ALU_SEL,
     pc_cond,
@@ -222,9 +225,15 @@ module control_unit(
 
   output reg [2:0]    dmem_SEL, imm_SEL;
   output reg [3:0]    ALU_SEL;
-  output reg [1:0]    reg_SEL, pc_SEL; 
+  output reg [1:0]    reg_SEL, pc_SEL;
+  output reg [1:0]    reg_RD; 
   output reg          dmem_WE, reg_WE, rs1_SEL, rs2_SEL; 
   output reg          pc_cond, pc_not;
+
+  localparam reg_RD_NONE = 2'b00;
+  localparam reg_RD_RS1  = 2'b01;
+  localparam reg_RD_RS2  = 2'b10;
+  localparam reg_RD_BOTH = 2'b11;
 
   initial begin
     dmem_SEL     <= 3'b000;
@@ -238,11 +247,14 @@ module control_unit(
     ALU_SEL      <= 4'b0000;
     pc_cond      <= 1'b0;
     pc_not       <= 1'b0;
+    reg_RD       <= reg_RD_NONE;
+
   end
 
   always @(*) begin
     pc_cond <= 1'b0;
     pc_not <= 1'b0;
+    reg_RD <= reg_RD_NONE;
 
     case (opcode)
       7'b0110111:   // LUI
@@ -292,469 +304,131 @@ module control_unit(
           pc_SEL    <= 2'b01;
           imm_SEL   <= 3'b011;
           ALU_SEL   <= 4'b1101;
+          reg_RD    <= reg_RD_RS1;
         end
-      7'b1100011:
+      7'b1100011:   // Banch instructions
         begin
+          dmem_SEL  <= 3'b000;
+          dmem_WE   <= 1'b0;
+          reg_WE    <= 1'b0;
+          rs1_SEL   <= 1'b0;
+          rs2_SEL   <= 1'b0;
+          reg_SEL   <= 2'b00;
+          pc_SEL    <= 2'b00;
+          imm_SEL   <= 3'b010;
+          reg_RD    <= reg_RD_BOTH;
+
+          pc_cond <= 1'b1;
           case (funct3)
-            3'b000:       // BEQ
+            3'b000:      ALU_SEL   <= 4'b1000;    // BEQ
+            3'b001:                               // BNE
               begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b0;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b010;
                 ALU_SEL   <= 4'b1000;
-
-                pc_cond <= 1'b1;
-              end
-            3'b001:       // BNE
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b0;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b010;
-                ALU_SEL   <= 4'b1000;
-
-                pc_cond <= 1'b1;
                 pc_not <= 1'b1;
               end
-            3'b100:       // BLT
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b0;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b010;
-                ALU_SEL   <= 4'b1010;
-
-                pc_cond <= 1'b1;
-              end
-            3'b101:       // BGE
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b0;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b010;
-                ALU_SEL   <= 4'b1100;
-
-                pc_cond <= 1'b1;
-              end
-            3'b110:       // BLTU
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b0;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b010;
-                ALU_SEL   <= 4'b1001;
-
-                pc_cond <= 1'b1;
-              end
-            3'b111:       // BGEU
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b0;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b010;
-                ALU_SEL   <= 4'b1011;
-
-                pc_cond <= 1'b1;
-              end
+            3'b100:       ALU_SEL   <= 4'b1010;   // BLT
+            3'b101:       ALU_SEL   <= 4'b1100;   // BGE
+            3'b110:       ALU_SEL   <= 4'b1001;   // BLTU
+            3'b111:       ALU_SEL   <= 4'b1011;   // BGEU
           endcase
         end
-      7'b0000011:
+      7'b0000011:   // Load instructions
         begin
+          dmem_WE   <= 1'b0;
+          reg_WE    <= 1'b1;
+          rs1_SEL   <= 1'b0;
+          rs2_SEL   <= 1'b1;
+          reg_SEL   <= 2'b00;
+          pc_SEL    <= 2'b00;
+          imm_SEL   <= 3'b011;
+          ALU_SEL   <= 4'b0000;
+          reg_RD    <= reg_RD_RS1;
           case (funct3)
-            3'b000:       // LB
-              begin
-                dmem_SEL  <= 3'b110;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b001:       // LH
-              begin
-                dmem_SEL  <= 3'b101;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b010:       // LW
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b100:       // LBU
-              begin
-                dmem_SEL  <= 3'b010;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b101:       // LHU
-              begin
-                dmem_SEL  <= 3'b001;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0000;
-              end
+            3'b000:       dmem_SEL  <= 3'b110;    // LB
+            3'b001:       dmem_SEL  <= 3'b101;    // LH
+            3'b010:       dmem_SEL  <= 3'b000;    // LW
+            3'b100:       dmem_SEL  <= 3'b010;    // LBU
+            3'b101:       dmem_SEL  <= 3'b001;    // LHU
           endcase
         end
-      7'b0100011:
+      7'b0100011:   // Store instructions
         begin
+          dmem_WE   <= 1'b1;
+          reg_WE    <= 1'b0;
+          rs1_SEL   <= 1'b0;
+          rs2_SEL   <= 1'b1;
+          reg_SEL   <= 2'b00;
+          pc_SEL    <= 2'b00;
+          imm_SEL   <= 3'b001;
+          ALU_SEL   <= 4'b0000;
+          reg_RD    <= reg_RD_BOTH;
           case (funct3)
-            3'b000:       // SB
-              begin
-                dmem_SEL  <= 3'b010;
-                dmem_WE   <= 1'b1;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b001;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b001:       // SH
-              begin
-                dmem_SEL  <= 3'b001;
-                dmem_WE   <= 1'b1;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b001;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b010:       // SW
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b1;
-                reg_WE    <= 1'b0;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b00;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b001;
-                ALU_SEL   <= 4'b0000;
-              end
+            3'b000:       dmem_SEL  <= 3'b010;    // SB
+            3'b001:       dmem_SEL  <= 3'b001;    // SH
+            3'b010:       dmem_SEL  <= 3'b000;    // SW
           endcase
         end
-      7'b0010011:
+      7'b0010011:   // Immediate Arithmetic 
         begin
+          dmem_SEL  <= 3'b000;
+          dmem_WE   <= 1'b0;
+          reg_WE    <= 1'b1;
+          rs1_SEL   <= 1'b0;
+          rs2_SEL   <= 1'b1;
+          reg_SEL   <= 2'b01;
+          pc_SEL    <= 2'b00;
+          imm_SEL   <= 3'b011;
+          reg_RD    <= reg_RD_RS1;
+
           case (funct3)
-            3'b000:       // ADDI
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b01;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0000;
-              end
-            3'b010:       // SLTI
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b01;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b1010;
-              end
-            3'b011:       // SLTIU
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b01;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b1001;
-              end
-            3'b100:       // XORI
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b01;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0100;
-              end
-            3'b110:       // ORI
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b01;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0011;
-              end
-            3'b111:       // ANDI
-              begin
-                dmem_SEL  <= 3'b000;
-                dmem_WE   <= 1'b0;
-                reg_WE    <= 1'b1;
-                rs1_SEL   <= 1'b0;
-                rs2_SEL   <= 1'b1;
-                reg_SEL   <= 2'b01;
-                pc_SEL    <= 2'b00;
-                imm_SEL   <= 3'b011;
-                ALU_SEL   <= 4'b0010;
-              end
+            3'b000:       ALU_SEL   <= 4'b0000;   // ADDI
+            3'b010:       ALU_SEL   <= 4'b1010;   // SLTI
+            3'b011:       ALU_SEL   <= 4'b1001;   // SLTIU
+            3'b100:       ALU_SEL   <= 4'b0100;   // XORI
+            3'b110:       ALU_SEL   <= 4'b0011;   // ORI
+            3'b111:       ALU_SEL   <= 4'b0010;   // ANDI
             3'b001:
               case (funct7)
-                7'b0000000:   // SLLI
-                  begin
-                    dmem_SEL  <= 3'b000;
-                    dmem_WE   <= 1'b0;
-                    reg_WE    <= 1'b1;
-                    rs1_SEL   <= 1'b0;
-                    rs2_SEL   <= 1'b1;
-                    reg_SEL   <= 2'b01;
-                    pc_SEL    <= 2'b00;
-                    imm_SEL   <= 3'b011;
-                    ALU_SEL   <= 4'b0101;
-                  end
+                7'b0000000:   ALU_SEL   <= 4'b0101;   // SLLI
               endcase
             3'b101:     
               case (funct7)
-                7'b0000000:   // SRLI
-                  begin
-                    dmem_SEL  <= 3'b000;
-                    dmem_WE   <= 1'b0;
-                    reg_WE    <= 1'b1;
-                    rs1_SEL   <= 1'b0;
-                    rs2_SEL   <= 1'b1;
-                    reg_SEL   <= 2'b01;
-                    pc_SEL    <= 2'b00;
-                    imm_SEL   <= 3'b011;
-                    ALU_SEL   <= 4'b0110;
-                  end
-                7'b0100000:   // SRAI
-                  begin
-                    dmem_SEL  <= 3'b000;
-                    dmem_WE   <= 1'b0;
-                    reg_WE    <= 1'b1;
-                    rs1_SEL   <= 1'b0;
-                    rs2_SEL   <= 1'b1;
-                    reg_SEL   <= 2'b01;
-                    pc_SEL    <= 2'b00;
-                    imm_SEL   <= 3'b011;
-                    ALU_SEL   <= 4'b0111;
-                  end
+                7'b0000000:   ALU_SEL   <= 4'b0110;   // SRLI
+                7'b0100000:   ALU_SEL   <= 4'b0111;   // SRAI
               endcase
           endcase
         end
-      7'b0110011:
-        case (funct3)
-          3'b000:
-            case (funct7)
-              7'b0000000:   // ADD
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0000;
-                end
-              7'b0100000:   // SUB
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0001;
-                end
-            endcase
-          3'b001:
-            case (funct7)
-              7'b0000000:   // SLL
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0101;
-                end
-            endcase
-          3'b010:
-            case (funct7)
-              7'b0000000:   // SLT
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b1010;
-                end
-            endcase
-          3'b011:
-            case (funct7)
-              7'b0000000:   // SLTU
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b1001;
-                end
-            endcase
-          3'b100:
-            case (funct7)
-              7'b0000000:   // XOR
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0100;
-                end
-            endcase
-          3'b101:
-            case (funct7)
-              7'b0000000:   // SRL
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0110;
-                end
-              7'b0100000:   // SRA
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0111;
-                end
-            endcase
-          3'b110:
-            case (funct7)
-              7'b0000000:   // OR
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0011;
-                end
-            endcase
-          3'b111:
-            case (funct7)
-              7'b0000000:   // AND
-                begin
-                  dmem_SEL  <= 3'b000;
-                  dmem_WE   <= 1'b0;
-                  reg_WE    <= 1'b1;
-                  rs1_SEL   <= 1'b0;
-                  rs2_SEL   <= 1'b0;
-                  reg_SEL   <= 2'b01;
-                  pc_SEL    <= 2'b00;
-                  imm_SEL   <= 3'b000;
-                  ALU_SEL   <= 4'b0010;
-                end
-            endcase
-        endcase   
+      7'b0110011:   // Register Arithmetic
+        begin 
+          dmem_SEL  <= 3'b000;
+          dmem_WE   <= 1'b0;
+          reg_WE    <= 1'b1;
+          rs1_SEL   <= 1'b0;
+          rs2_SEL   <= 1'b0;
+          reg_SEL   <= 2'b01;
+          pc_SEL    <= 2'b00;
+          imm_SEL   <= 3'b000;
+          reg_RD    <= reg_RD_BOTH;
+        
+          case (funct7) 
+            7'b0000000:
+              case (funct3)
+                3'b000:   ALU_SEL   <= 4'b0000;   // ADD
+                3'b001:   ALU_SEL   <= 4'b0101;   // SLL
+                3'b010:   ALU_SEL   <= 4'b1010;   // SLT
+                3'b011:   ALU_SEL   <= 4'b1001;   // SLTU
+                3'b100:   ALU_SEL   <= 4'b0100;   // XOR
+                3'b101:   ALU_SEL   <= 4'b0110;   // SRL
+                3'b110:   ALU_SEL   <= 4'b0011;   // OR
+                3'b111:   ALU_SEL   <= 4'b0010;   // AND
+              endcase
+            7'b0100000:
+              case (funct3)
+                3'b000:   ALU_SEL   <= 4'b0001;   // SUB
+                3'b101:   ALU_SEL   <= 4'b0111;   // SRA
+              endcase
+          endcase 
+        end  
       default:
           begin
               dmem_SEL  <= 3'b000;
@@ -766,6 +440,7 @@ module control_unit(
               pc_SEL    <= 2'b00;
               imm_SEL   <= 3'b000;
               ALU_SEL   <= 4'b0000;
+              reg_RD    <= reg_RD_NONE;
           end
       endcase
   end
