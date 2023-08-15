@@ -63,7 +63,7 @@ module control_logic_tb();
   control_logic control_unit(
     .clk(clk), 
     .reset(reset),
-    .opcode(opcode), 
+    .opcode(opcode),
     .funct7(funct7), 
     .funct3(funct3), 
     .jump(jump), 
