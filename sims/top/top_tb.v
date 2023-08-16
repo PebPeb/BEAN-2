@@ -55,16 +55,16 @@ module top_tb();
     .rs3(rs3), 
     .jump(jump),
 
-    .stall_F(flush_F),
-    .stall_D(flush_D),
-    .stall_E(flush_E), 
-    .stall_M(flush_M), 
-    .stall_WB(flush_WB),
-    .flush_F(stall_F), 
-    .flush_D(stall_D), 
-    .flush_E(stall_E), 
-    .flush_M(stall_M), 
-    .flush_WB(stall_WB)
+    .stall_F(stall_F),
+    .stall_D(stall_D),
+    .stall_E(stall_E), 
+    .stall_M(stall_M), 
+    .stall_WB(stall_WB),
+    .flush_F(flush_F), 
+    .flush_D(flush_D), 
+    .flush_E(flush_E), 
+    .flush_M(flush_M), 
+    .flush_WB(flush_WB)
   );
 
 

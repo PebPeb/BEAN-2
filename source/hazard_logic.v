@@ -64,11 +64,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
     if (reg_WE_WB) begin
       reg_reserve[rs3_WB] <= 1'b0;
     end    
-  end
 
-  // Read Write Collision 
-  // Happens when tring to read from a register that is waiting to be writen too
-  always @(reg_RD, rs1, rs2, reset) begin
     if (reset) begin
       rd_wr_collision <= 1'b0;
     end
@@ -81,6 +77,11 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
       endcase
     end
   end
+
+  // Read Write Collision 
+  // Happens when tring to read from a register that is waiting to be writen too
+  // always @(reg_RD, rs1, rs2, reset) begin
+  // end
 
   // stall logic
   reg           stall = 0;
@@ -154,9 +155,9 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
     end
   end
 
-  // ----------------------------- //
-  // Write Back
-  // ----------------------------- //
+  // // ----------------------------- //
+  // // Write Back
+  // // ----------------------------- //
 
   reg             reg_WE_WB = 0;
   reg [4:0]       rs3_WB = 0;
