@@ -27,6 +27,7 @@ module datapath(
   memDataWD, memAdrs,
   opcode, funct7,
   funct3,
+  rs1, rs2, rs3, rs3_WB_out,
   jump);
 
   input             clk, reset;
@@ -45,6 +46,7 @@ module datapath(
   output [6:0]      opcode, funct7;
   output [2:0]      funct3;
   output            jump;
+  output [4:0]      rs1, rs2, rs3, rs3_WB_out;
 
   // ----------------------------- //
   // Fetch
@@ -142,6 +144,10 @@ module datapath(
   assign funct3 = instr_D[14:12];
   assign funct7 = instr_D[31:25];
 
+  assign rs1 = instr_D[19:15];
+  assign rs2 = instr_D[24:20];
+  assign rs3 = instr_D[11:7];
+  assign rs3_WB_out = rs3_WB;
 
   // ----------------------------- //
   // Execute
