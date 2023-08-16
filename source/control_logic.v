@@ -15,7 +15,7 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
                      imm_SEL, reg_SEL, pc_SEL, reg_RD, dmem_WE, 
                      reg_WE, rs1_SEL, rs2_SEL, clk, reset,
                      stall_E, stall_M, stall_WB,
-                     flush_E, flush_M, flush_WB);
+                     flush_E, flush_M, flush_WB, reg_WE_D_out);
 
   // Input & Outputs
   input wire [6:0]     opcode, funct7;
@@ -29,11 +29,12 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
   output wire [1:0]    reg_SEL, pc_SEL; 
   output wire [1:0]    reg_RD;
   output wire          dmem_WE, reg_WE, rs1_SEL, rs2_SEL;
+  output wire          reg_WE_D_out;   
 
   // assign opcode = inst[6:0];
   // assign funct3 = inst[14:12];
   // assign funct7 = inst[31:25];
-
+  assign reg_WE_D_out = reg_WE_D;
 
   // ----------------------------- //
   // Decode

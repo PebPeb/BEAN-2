@@ -30,6 +30,7 @@ module top_tb();
   wire [4:0]  rs1, rs2, rs3;
   wire        stall_F, stall_D, stall_E, stall_M, stall_WB;
   wire        flush_F, flush_D, flush_E, flush_M, flush_WB;
+  wire        reg_WE_D;    
 
   datapath DUT (
     .clk(clk), 
@@ -84,6 +85,7 @@ module top_tb();
     .reg_WE(reg_WE), 
     .rs1_SEL(rs1_SEL), 
     .rs2_SEL(rs2_SEL),
+    .reg_WE_D_out(reg_WE_D),
 
     .stall_E(stall_E), 
     .stall_M(stall_M), 
@@ -93,10 +95,10 @@ module top_tb();
     .flush_WB(flush_WB));
 
   hazard_logic hazard_unit (
-    .clk(), 
-    .reset(), 
-    .reg_WE(), 
-    .reg_RD(), 
+    .clk(clk), 
+    .reset(reset), 
+    .reg_WE(reg_WE_D), 
+    .reg_RD(reg_RD), 
     .rs1(rs1), 
     .rs2(rs2), 
     .rs3(rs3),

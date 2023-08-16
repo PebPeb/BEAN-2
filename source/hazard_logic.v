@@ -51,7 +51,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
   // Decode
   // ----------------------------- //
 
-  reg [31:0]      reg_reserve = 32'h00000000;
+  reg [31:0]      reg_reserve = 32'b0;
   reg             rd_wr_collision = 0;
 
   always @(posedge clk) begin
