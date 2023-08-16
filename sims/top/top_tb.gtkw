@@ -1,0 +1,78 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Mon Aug 14 02:12:00 2023
+[*]
+[dumpfile] "/home/pigeonlord9000/Desktop/BEAN-2/sims/top/top_tb.vcd"
+[dumpfile_mtime] "Mon Aug 14 02:07:41 2023"
+[dumpfile_size] 24623
+[savefile] "/home/pigeonlord9000/Desktop/BEAN-2/sims/top/top_tb.gtkw"
+[timestart] 0
+[size] 3743 2030
+[pos] -1 -1
+*-2.270154 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top_tb.
+[treeopen] top_tb.control_unit.
+[sst_width] 388
+[signals_width] 493
+[sst_expanded] 1
+[sst_vpaned_height] 615
+@28
+top_tb.DUT.clk
+top_tb.DUT.reset
+@22
+top_tb.instruction_mem.rd[31:0]
+top_tb.instruction_mem.a[31:0]
+top_tb.DUT.pc[31:0]
+@200
+-
+-Fetch
+@22
+top_tb.DUT.pc_F[31:0]
+top_tb.DUT.pc_plus4_F[31:0]
+top_tb.DUT.instr_F[31:0]
+@200
+-Decode
+@22
+top_tb.DUT.pc_D[31:0]
+top_tb.DUT.pc_plus4_D[31:0]
+top_tb.DUT.instr_D[31:0]
+@200
+-
+@22
+top_tb.control_unit.opcode[6:0]
+top_tb.control_unit.funct7[6:0]
+@28
+top_tb.control_unit.funct3[2:0]
+@200
+-
+-Execute
+@22
+top_tb.DUT.pc_plus4_E[31:0]
+@200
+-Memory
+-Write Back
+-
+@28
+top_tb.control_unit.reg_WE_WB
+top_tb.control_unit.reg_SEL_WB[1:0]
+@200
+-
+@28
+top_tb.control_unit.reg_WE
+top_tb.control_unit.reg_SEL[1:0]
+@200
+-
+@22
+top_tb.DUT.regFILE.\x[1][31:0]
+top_tb.DUT.regFILE.\x[2][31:0]
+top_tb.DUT.regFILE.\x[3][31:0]
+top_tb.DUT.regFILE.\x[4][31:0]
+top_tb.DUT.regFILE.\x[5][31:0]
+top_tb.DUT.regFILE.\x[6][31:0]
+top_tb.DUT.regFILE.\x[7][31:0]
+top_tb.DUT.regFILE.\x[8][31:0]
+top_tb.DUT.regFILE.\x[9][31:0]
+top_tb.DUT.regFILE.\x[10][31:0]
+top_tb.DUT.regFILE.\x[11][31:0]
+[pattern_trace] 1
+[pattern_trace] 0
