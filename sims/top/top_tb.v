@@ -141,7 +141,7 @@ module top_tb();
 
   integer i;
 	initial begin
-		$dumpfile("top_tb.vcd");
+		$dumpfile("top/top_tb.vcd");
 		$dumpvars(0, top_tb);
 
     for (i = 0; i < 32; i = i + 1)

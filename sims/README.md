@@ -1,0 +1,1 @@
+make TARGET=<target_folder>

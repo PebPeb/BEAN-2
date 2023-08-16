@@ -88,7 +88,7 @@ module datapath_tb();
 
   integer i;
 	initial begin
-		$dumpfile("datapath_tb.vcd");
+		$dumpfile("datapath/datapath_tb.vcd");
 		$dumpvars(0, datapath_tb);
 
     for (i = 0; i < 32; i = i + 1)
