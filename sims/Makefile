@@ -10,6 +10,9 @@ build:
 launch:
 	gtkwave $(TARGET)/$(TARGET)_tb.vcd
 
+gtkw:
+	gtkwave $(TARGET)/$(TARGET)_tb.gtkw
+
 clean:
 	rm -f $(TARGET)/$(TARGET)_tb.out
 	rm -f $(TARGET)/$(TARGET)_tb.vcd
