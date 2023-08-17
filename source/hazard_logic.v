@@ -106,6 +106,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       end
     end
   end
+  
 
   always @(posedge clk) begin
     if (jumping) begin
