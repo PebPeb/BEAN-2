@@ -1,21 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Aug 14 02:12:00 2023
+[*] Thu Aug 17 00:06:16 2023
 [*]
 [dumpfile] "/home/pigeonlord9000/Desktop/BEAN-2/sims/top/top_tb.vcd"
-[dumpfile_mtime] "Mon Aug 14 02:07:41 2023"
-[dumpfile_size] 24623
+[dumpfile_mtime] "Thu Aug 17 00:02:12 2023"
+[dumpfile_size] 30248
 [savefile] "/home/pigeonlord9000/Desktop/BEAN-2/sims/top/top_tb.gtkw"
 [timestart] 0
-[size] 3743 2030
+[size] 4164 2779
 [pos] -1 -1
-*-2.270154 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-3.270154 44 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top_tb.
-[treeopen] top_tb.control_unit.
 [sst_width] 388
 [signals_width] 493
 [sst_expanded] 1
-[sst_vpaned_height] 615
+[sst_vpaned_height] 501
 @28
 top_tb.DUT.clk
 top_tb.DUT.reset
@@ -26,8 +25,9 @@ top_tb.DUT.pc[31:0]
 @200
 -
 -Fetch
-@22
+@23
 top_tb.DUT.pc_F[31:0]
+@22
 top_tb.DUT.pc_plus4_F[31:0]
 top_tb.DUT.instr_F[31:0]
 @200
@@ -49,6 +49,7 @@ top_tb.control_unit.funct3[2:0]
 @22
 top_tb.DUT.pc_plus4_E[31:0]
 @200
+-
 -Memory
 -Write Back
 -
@@ -74,5 +75,24 @@ top_tb.DUT.regFILE.\x[8][31:0]
 top_tb.DUT.regFILE.\x[9][31:0]
 top_tb.DUT.regFILE.\x[10][31:0]
 top_tb.DUT.regFILE.\x[11][31:0]
+@200
+-
+@22
+top_tb.DUT.regFILE.\x[15][31:0]
+@200
+-
+-
+@28
+top_tb.hazard_unit.rd_wr_collision
+@22
+top_tb.hazard_unit.rs3_WB[4:0]
+@28
+top_tb.hazard_unit.reg_WE_WB
+@22
+top_tb.hazard_unit.rs3_WB[4:0]
+@28
+top_tb.hazard_unit.flush_E
+top_tb.hazard_unit.stall_E
+top_tb.hazard_unit.stall
 [pattern_trace] 1
 [pattern_trace] 0

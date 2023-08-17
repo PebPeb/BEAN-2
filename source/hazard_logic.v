@@ -65,6 +65,9 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
       reg_reserve[rs3_WB] <= 1'b0;
     end    
 
+  end
+
+  always @(rs1, rs2, posedge clk) begin
     if (reset) begin
       rd_wr_collision <= 1'b0;
     end
@@ -97,6 +100,8 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
       stall_F_n <= 1'b0;
       stall_D_n <= 1'b0; 
       stall_E_n <= 1'b0; 
+
+      flush_E_n <= 1'b0;
     end
   end
 
@@ -108,7 +113,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
     if (stall) begin
       flush_E_n <= 1'b1;
     end
-    else begin
+    else begin 
       flush_E_n <= 1'b0;
     end
   end
