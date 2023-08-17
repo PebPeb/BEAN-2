@@ -11,7 +11,7 @@
 //
 
 
-module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL, 
+module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL, 
                      imm_SEL, reg_SEL, pc_SEL, reg_RD, dmem_WE, 
                      reg_WE, rs1_SEL, rs2_SEL, clk, reset,
                      stall_E, stall_M, stall_WB,
@@ -29,7 +29,7 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
   output wire [1:0]    reg_SEL, pc_SEL; 
   output wire [1:0]    reg_RD;
   output wire          dmem_WE, reg_WE, rs1_SEL, rs2_SEL;
-  output wire          reg_WE_D_out;   
+  output wire          reg_WE_D_out, jumping;   
 
   // assign opcode = inst[6:0];
   // assign funct3 = inst[14:12];
@@ -88,7 +88,7 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
   reg             pc_cond_E = 0;
   reg             pc_not_E = 0;
 
-  wire            pc_SEL_E_cond;
+  wire [1:0]      pc_SEL_E_cond;
   wire            en_E, reset_E;
   assign en_E = ~stall_E;
   assign reset_E = reset | flush_E;
@@ -122,7 +122,8 @@ module control_logic(opcode, funct7, funct3, jump, ALU_SEL, dmem_SEL,
   end
 
   // pc_control
-  assign pc_SEL_E_cond = pc_cond_E ? ((jump == (1'b1 ^ pc_not_E)) ? 2'b11 : 2'b00) : pc_SEL_E; 
+  assign pc_SEL_E_cond = pc_cond_E ? {(jump == (1'b1 ^ pc_not_E)) ? 2'b11 : 2'b00} : pc_SEL_E; 
+  assign jumping = pc_cond_E & (jump & (1'b1 ^ pc_not_E));
 
   assign ALU_SEL = ALU_SEL_E;
   assign rs1_SEL = rs1_SEL_E;

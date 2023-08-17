@@ -31,6 +31,7 @@ module top_tb();
   wire        stall_F, stall_D, stall_E, stall_M, stall_WB;
   wire        flush_F, flush_D, flush_E, flush_M, flush_WB;
   wire        reg_WE_D;    
+  wire        jumping;
 
   datapath DUT (
     .clk(clk), 
@@ -75,6 +76,7 @@ module top_tb();
     .funct7(funct7), 
     .funct3(funct3), 
     .jump(jump), 
+    .jumping(jumping),
     .ALU_SEL(ALU_SEL), 
     .dmem_SEL(dmem_SEL), 
     .imm_SEL(imm_SEL), 
@@ -102,6 +104,7 @@ module top_tb();
     .rs1(rs1), 
     .rs2(rs2), 
     .rs3(rs3),
+    .jumping(pc_SEL[0]),
     .flush_F(flush_F), 
     .flush_D(flush_D), 
     .flush_E(flush_E), 

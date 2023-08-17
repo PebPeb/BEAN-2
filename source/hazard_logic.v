@@ -21,12 +21,13 @@
 //  0 -> none
 //  1 -> rs3
 
-module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
+module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
                     flush_F, flush_D, flush_E, flush_M, flush_WB,
                     stall_F, stall_D, stall_E, stall_M, stall_WB);
 
   input           clk, reset;
   input           reg_WE;
+  input           jumping;
   input [1:0]     reg_RD;
   input [4:0]     rs1, rs2, rs3;
   output wire     flush_F, flush_D, flush_E, flush_M, flush_WB;
@@ -88,7 +89,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
 
   // stall logic
   reg           stall = 0;
-  always @(*) begin
+  always @(rd_wr_collision) begin
     if (rd_wr_collision) begin
       stall <= 1'b1;
       stall_F_n <= 1'b1;
@@ -100,23 +101,37 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3,
       stall_F_n <= 1'b0;
       stall_D_n <= 1'b0; 
       stall_E_n <= 1'b0; 
-
-      flush_E_n <= 1'b0;
+      if (~jumping) begin
+        flush_E_n <= 1'b0;
+      end
     end
   end
+
+  always @(posedge clk) begin
+    if (jumping) begin
+      flush_D_n <= 1'b1;
+      flush_E_n <= 1'b1;
+      flush_M_n <= 1'b1;
+    end
+    else if (stall) begin
+      flush_E_n <= 1'b1;
+      flush_D_n <= 1'b0;
+      flush_M_n <= 1'b0;
+    end
+    else begin 
+      flush_E_n <= 1'b0;
+      flush_D_n <= 1'b0;
+      flush_M_n <= 1'b0;
+    end
+  end
+
 
   // ----------------------------- //
   // Execute
   // ----------------------------- //
 
-  always @(posedge clk) begin
-    if (stall) begin
-      flush_E_n <= 1'b1;
-    end
-    else begin 
-      flush_E_n <= 1'b0;
-    end
-  end
+  // always @(posedge clk) begin
+  // end
 
   reg [4:0]       rs3_E = 0;
   reg             reg_WE_E = 0;
