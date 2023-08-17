@@ -56,7 +56,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   reg             rd_wr_collision = 0;
 
   always @(posedge clk) begin
-    if (reg_WE & (rs3 != 0)) begin
+    if (reg_WE & (rs3 != 0) & ~jumping) begin
       reg_reserve[rs3] <= 1'b1;
     end
   end
@@ -65,6 +65,10 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
     if (reg_WE_WB) begin
       reg_reserve[rs3_WB] <= 1'b0;
     end    
+
+    if (jumping & reg_WE_E) begin
+      reg_reserve[rs3_E] <= 1'b0;
+    end
 
   end
 
