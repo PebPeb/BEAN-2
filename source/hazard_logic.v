@@ -139,12 +139,12 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   end
 
   // Continuesly checking for a read write collision
-  always @(reg_RD, rs1, rs2, reg_reserve) begin
+  always @(*) begin
     case (reg_RD)
-      00:   rd_wr_collision <= 1'b0;
-      01:   rd_wr_collision <= reg_reserve[rs1];
-      10:   rd_wr_collision <= reg_reserve[rs2];
-      11:   rd_wr_collision <= reg_reserve[rs1] | reg_reserve[rs2];
+      2'b00:   rd_wr_collision <= 1'b0;
+      2'b01:   rd_wr_collision <= reg_reserve[rs1];
+      2'b10:   rd_wr_collision <= reg_reserve[rs2];
+      2'b11:   rd_wr_collision <= reg_reserve[rs1] | reg_reserve[rs2];
     endcase
   end
 
