@@ -54,13 +54,10 @@ module datapath(
   
   wire [31:0]     pc_plus4_F, pc_F, instr_F;
   wire [31:0]     pc_now;
-  reg             pc_next = 0;
+  reg [31:0]      pc_next = 0;
 
-  wire            en_F, reset_F;
+  wire            en_F;
   assign en_F = ~stall_F;
-  assign reset_F = reset | flush_F;
-
-  // REG_fetch
 
 
   mux2 #(.WIDTH(32)) MUX_pc_0 (
@@ -71,14 +68,18 @@ module datapath(
 
 
   // REG_fetch
-  always @(posedge clk, posedge reset_F) begin
-    if (reset_F) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       pc_next <= 0;
     end
     else if (en_F) begin
       pc_next <= pc_now;
     end
   end
+  always @(posedge flush_F) begin
+    pc_next <= 0;
+  end
+
 
   adder #(.WIDTH(32)) plus4 (
     .a(4), 
@@ -106,13 +107,12 @@ module datapath(
   wire [31:0]     rdout1_D, rdout2_D, wrs3;
   wire [31:0]     ExtImm_D;
 
-  wire            en_D, reset_D;
+  wire            en_D;
   assign en_D = ~stall_D;
-  assign reset_D = reset | flush_D;
 
   // REG_decode
-  always @(posedge clk, posedge reset_D) begin
-    if (reset_D) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       pc_plus4_D <= 0;
       pc_D <= 0;
       instr_D <= 0;
@@ -123,6 +123,12 @@ module datapath(
       instr_D <= instr_F;
     end
   end
+  always @(posedge flush_D) begin
+    pc_plus4_D <= 0;
+    pc_D <= 0;
+    instr_D <= 0;
+  end
+
 
   assign invrt_clk = ~clk;
 
@@ -165,13 +171,12 @@ module datapath(
   wire [31:0]     ALUResults_E;
   wire [31:0]     pcPlusImm_E;
 
-  wire            en_E, reset_E;
+  wire            en_E;
   assign en_E = ~stall_E;
-  assign reset_E = reset | flush_E;
 
   // REG_execute
-  always @(posedge clk, posedge reset_E) begin
-    if (reset_E) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       pc_E <= 0;
       pc_plus4_E <= 0;
       ExtImm_E <= 0;
@@ -187,6 +192,14 @@ module datapath(
       rdout2_E <= rdout2_D;
       rs3_E <= rs3_D;
     end
+  end
+  always @(posedge flush_E) begin
+    pc_E <= 0;
+    pc_plus4_E <= 0;
+    ExtImm_E <= 0;
+    rdout1_E <= 0;
+    rdout2_E <= 0;
+    rs3_E <= 0;
   end
 
   mux2 #(.WIDTH(32)) MUX_rs1 (
@@ -229,13 +242,12 @@ module datapath(
   wire [31:0]     pc_jump;
   wire [31:0]     memData_M;
 
-  wire            en_M, reset_M;
+  wire            en_M;
   assign en_M = ~stall_M;
-  assign reset_M = reset | flush_M;
 
   // REG_memory
-  always @(posedge clk, posedge reset_M) begin
-    if (reset_M) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       pc_plus4_M <= 0;
       pcPlusImm_M <= 0;
       rdout2_M <= 0;
@@ -252,6 +264,15 @@ module datapath(
       rs3_M <= rs3_E;
     end
   end
+  always @(posedge flush_M) begin
+    pc_plus4_M <= 0;
+    pcPlusImm_M <= 0;
+    rdout2_M <= 0;
+    ExtImm_M <= 0;
+    ALUResults_M <= 0;
+    rs3_M <= 0;
+  end
+
 
   assign memAdrs = ALUResults_M;
 
@@ -278,13 +299,12 @@ module datapath(
   reg [31:0]      ExtImm_WB = 0;
   reg [4:0]       rs3_WB = 0;
 
-  wire            en_WB, reset_WB;
+  wire            en_WB;
   assign en_WB = ~stall_WB;
-  assign reset_WB = reset | flush_WB;
 
   // REG_writeback
-  always @(posedge clk, posedge reset_WB) begin
-    if (reset_WB) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       pc_plus4_WB <= 0;
       memData_WB <= 0;
       ALUResults_WB <= 0;
@@ -298,6 +318,13 @@ module datapath(
       ExtImm_WB <= ExtImm_M;
       rs3_WB <= rs3_M;
     end
+  end
+  always @(posedge flush_WB) begin
+    pc_plus4_WB <= 0;
+    memData_WB <= 0;
+    ALUResults_WB <= 0;
+    ExtImm_WB <= 0;
+    rs3_WB <= 0;
   end
 
 
