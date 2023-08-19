@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Aug 17 00:06:16 2023
+[*] Fri Aug 18 21:30:50 2023
 [*]
 [dumpfile] "/home/pigeonlord9000/Desktop/BEAN-2/sims/top/top_tb.vcd"
-[dumpfile_mtime] "Thu Aug 17 00:02:12 2023"
-[dumpfile_size] 30248
+[dumpfile_mtime] "Fri Aug 18 03:08:27 2023"
+[dumpfile_size] 30077
 [savefile] "/home/pigeonlord9000/Desktop/BEAN-2/sims/top/top_tb.gtkw"
 [timestart] 0
-[size] 4164 2779
+[size] 6144 3328
 [pos] -1 -1
-*-3.270154 44 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-3.270154 24 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top_tb.
 [sst_width] 388
 [signals_width] 493
@@ -25,9 +25,8 @@ top_tb.DUT.pc[31:0]
 @200
 -
 -Fetch
-@23
-top_tb.DUT.pc_F[31:0]
 @22
+top_tb.DUT.pc_F[31:0]
 top_tb.DUT.pc_plus4_F[31:0]
 top_tb.DUT.instr_F[31:0]
 @200
@@ -94,5 +93,27 @@ top_tb.hazard_unit.rs3_WB[4:0]
 top_tb.hazard_unit.flush_E
 top_tb.hazard_unit.stall_E
 top_tb.hazard_unit.stall
+@200
+-
+@c00028
+#{Stall Stages} top_tb.hazard_unit.stall_F top_tb.hazard_unit.stall_D top_tb.hazard_unit.stall_E top_tb.hazard_unit.stall_M top_tb.hazard_unit.stall_WB
+@28
+top_tb.hazard_unit.stall_F
+top_tb.hazard_unit.stall_D
+top_tb.hazard_unit.stall_E
+top_tb.hazard_unit.stall_M
+top_tb.hazard_unit.stall_WB
+@1401208
+-group_end
+@800028
+#{Flush Stages} top_tb.hazard_unit.flush_F top_tb.hazard_unit.flush_D top_tb.hazard_unit.flush_E top_tb.hazard_unit.flush_M top_tb.hazard_unit.flush_WB
+@28
+top_tb.hazard_unit.flush_F
+top_tb.hazard_unit.flush_D
+top_tb.hazard_unit.flush_E
+top_tb.hazard_unit.flush_M
+top_tb.hazard_unit.flush_WB
+@1001208
+-group_end
 [pattern_trace] 1
 [pattern_trace] 0
