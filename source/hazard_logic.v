@@ -50,6 +50,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
 
   reg         rd_wr_collision = 0;
+  //wire        rd_wr_collision;
   reg [31:0]  reg_reserve = 32'h00000000;
 
   // Hazard State Machine
@@ -138,7 +139,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   end
 
   // Continuesly checking for a read write collision
-  always @(*) begin
+  always @(reg_RD, rs1, rs2, reg_reserve) begin
     case (reg_RD)
       00:   rd_wr_collision <= 1'b0;
       01:   rd_wr_collision <= reg_reserve[rs1];
@@ -146,6 +147,8 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       11:   rd_wr_collision <= reg_reserve[rs1] | reg_reserve[rs2];
     endcase
   end
+
+  // assign rd_wr_collision = (reg_RD == 2'b00) ? 1'b0 : {(reg_RD == 2'b01) ? reg_reserve[rs1] : {(reg_RD == 2'b10) ? reg_reserve[rs2] : reg_reserve[rs1] | reg_reserve[rs2]}};
 
   always @(*) begin
     if (rd_wr_collision & ~jumping) begin
