@@ -49,71 +49,77 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   assign stall_WB = stall_WB_n;
 
 
+  reg         rd_wr_collision = 0;
+  reg [31:0]  reg_reserve = 32'h00000000;
+
   // Hazard State Machine
 
   localparam OPERATIONAL_STATE = 2'b00;
   localparam COLLISION_STATE = 2'b01;
   localparam JUMP_STATE = 2'b10;
   reg [1:0]  current_state = OPERATIONAL_STATE;
-  reg [1:0]  next_state = OPERATIONAL_STATE;
+  // reg [1:0]  next_state = OPERATIONAL_STATE;
 
   // State Register
-  always @(posedge clk, posedge reset) begin
-    if (reset)
-      current_state <= OPERATIONAL_STATE;
-    else
-      current_state <= next_state;
-  end
+  // always @(posedge clk, posedge reset) begin
+  //   if (reset)
+  //     current_state <= OPERATIONAL_STATE;
+  //   else
+  //     current_state <= next_state;
+  // end
 
   // State Transition
   always @(posedge clk) begin
     case (current_state)
       OPERATIONAL_STATE:
         if (jumping)
-          next_state <= JUMP_STATE;
+          current_state <= JUMP_STATE;
         else if (rd_wr_collision)
-          next_state <= COLLISION_STATE;
+          current_state <= COLLISION_STATE;
         else
-          next_state <= OPERATIONAL_STATE;
+          current_state <= OPERATIONAL_STATE;
       JUMP_STATE:
         if (rd_wr_collision)
-            next_state <= COLLISION_STATE;
+            current_state <= COLLISION_STATE;
         else
-          next_state <= OPERATIONAL_STATE;
+          current_state <= OPERATIONAL_STATE;
       COLLISION_STATE:
         if (jumping)
-          next_state <= JUMP_STATE;
+          current_state <= JUMP_STATE;
         else if (rd_wr_collision)
-          next_state <= COLLISION_STATE;
+          current_state <= COLLISION_STATE;
         else
-          next_state <= OPERATIONAL_STATE;
+          current_state <= OPERATIONAL_STATE;
     endcase
   end
 
 
   // State Logic
-  always @(posedge clk) begin
+  always @(current_state) begin
     case (current_state)
       OPERATIONAL_STATE:
-        flush_D_n <= 1'b0;
-        flush_E_n <= 1'b0;
-        flush_M_n <= 1'b0;
-
+        begin
+          flush_D_n <= 1'b0;
+          flush_E_n <= 1'b0;
+          flush_M_n <= 1'b0;
+        end
       JUMP_STATE:
-        if (reg_WE_E)
-          reg_reserve[rs3_E] = 1'b0;
-        if (reg_WE_M)
-          reg_reserve[rs3_M] = 1'b0;
-          
-        flush_D_n <= 1'b1;
-        flush_E_n <= 1'b1;
-        flush_M_n <= 1'b1;
-
+        begin
+          if (reg_WE_E)
+            reg_reserve[rs3_E] = 1'b0;
+          if (reg_WE_M)
+            reg_reserve[rs3_M] = 1'b0;
+            
+          flush_D_n <= 1'b1;
+          flush_E_n <= 1'b1;
+          flush_M_n <= 1'b1;
+        end
       COLLISION_STATE:
-        flush_D_n <= 1'b0;
-        flush_E_n <= 1'b1;
-        flush_M_n <= 1'b0;
-
+        begin
+          flush_D_n <= 1'b0;
+          flush_E_n <= 1'b1;
+          flush_M_n <= 1'b0;
+        end
     endcase
   end
 
@@ -122,15 +128,13 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   // Set on rising edge
   always @(posedge clk) begin
-    if (reg_WE & (rs3 != 0)) begin
+    if (reg_WE & (rs3 != 0)) 
       reg_reserve[rs3] <= 1'b1;
-    end
   end
   // Clear on falling edge
   always @(negedge clk) begin
     if (reg_WE_WB)
       reg_reserve[rs3_WB] <= 1'b0;
-    else if 
   end
 
   // Continuesly checking for a read write collision
@@ -144,11 +148,12 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   end
 
   always @(*) begin
-    if (rd_wr_collision) begin
+    if (rd_wr_collision & ~jumping) begin
       stall_F_n <= 1'b1;
       stall_D_n <= 1'b1; 
       stall_E_n <= 1'b1; 
-    else
+    end
+    else begin
       stall_F_n <= 1'b0;
       stall_D_n <= 1'b0; 
       stall_E_n <= 1'b0; 
@@ -162,14 +167,13 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   reg [4:0]       rs3_E = 0;
   reg             reg_WE_E = 0;
-  wire            enable_E, reset_E;
+  wire            enable_E;
 
   assign enable_E       = ~stall_E_n;
-  assign reset_E  = reset | flush_E_n;
 
   // REG_execute
-  always @(posedge clk, posedge reset_E) begin
-    if (reset_E) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       rs3_E <= 0;
       reg_WE_E <= 0;
     end
@@ -178,6 +182,10 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       reg_WE_E <= reg_WE;
     end
   end
+  always @(posedge flush_E_n) begin
+    rs3_E <= 0;
+    reg_WE_E <= 0;
+  end
 
   // ----------------------------- //
   // Memory
@@ -185,14 +193,13 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   reg [4:0]       rs3_M = 0;
   reg             reg_WE_M = 0;
-  wire            enable_M, reset_M;
+  wire            enable_M;
 
   assign enable_M       = ~stall_M_n;
-  assign reset_M  = reset | flush_M_n;
 
   // REG_memory
-  always @(posedge clk, posedge reset_M) begin
-    if (reset_M) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       rs3_M <= 0;
       reg_WE_M <= 0;
     end
@@ -201,6 +208,11 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       reg_WE_M <= reg_WE_E;
     end
   end
+  always @(posedge flush_M_n) begin
+    rs3_M <= 0;
+    reg_WE_M <= 0;
+  end
+
 
   // // ----------------------------- //
   // // Write Back
@@ -208,14 +220,13 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   reg [4:0]       rs3_WB = 0;
   reg             reg_WE_WB = 0;
-  wire            enable_WB, reset_WB;
+  wire            enable_WB;
 
   assign enable_WB       = ~stall_WB_n;
-  assign reset_WB  = reset | flush_WB_n;
 
   // REG_writeback
-  always @(posedge clk, posedge reset_WB) begin
-    if (reset_WB) begin
+  always @(posedge clk, posedge reset) begin
+    if (reset) begin
       reg_WE_WB <= 0;
       rs3_WB <= 0;
     end
@@ -224,5 +235,10 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       rs3_WB <= rs3_M;
     end
   end
+  always @(posedge flush_WB_n) begin
+    reg_WE_WB <= 0;
+    rs3_WB <= 0;
+  end
+
 
 endmodule
