@@ -56,10 +56,9 @@ module datapath(
   wire [31:0]     pc_now;
   reg             pc_next = 0;
 
-  wire            en_F, reset_F, sync_reset_F;
+  wire            en_F, reset_F;
   assign en_F = ~stall_F;
-  assign reset_F = reset;
-  assign sync_reset_F       = flush_F;
+  assign reset_F = reset | flush_F;
 
   // REG_fetch
 
@@ -73,7 +72,7 @@ module datapath(
 
   // REG_fetch
   always @(posedge clk, posedge reset_F) begin
-    if (reset_F | sync_reset_F) begin
+    if (reset_F) begin
       pc_next <= 0;
     end
     else if (en_F) begin
@@ -107,14 +106,13 @@ module datapath(
   wire [31:0]     rdout1_D, rdout2_D, wrs3;
   wire [31:0]     ExtImm_D;
 
-  wire            en_D, reset_D, sync_reset_D;
+  wire            en_D, reset_D;
   assign en_D = ~stall_D;
-  assign reset_D = reset;
-  assign sync_reset_D     = flush_D;
+  assign reset_D = reset | flush_D;
 
   // REG_decode
   always @(posedge clk, posedge reset_D) begin
-    if (reset_D | sync_reset_D) begin
+    if (reset_D) begin
       pc_plus4_D <= 0;
       pc_D <= 0;
       instr_D <= 0;
@@ -167,14 +165,13 @@ module datapath(
   wire [31:0]     ALUResults_E;
   wire [31:0]     pcPlusImm_E;
 
-  wire            en_E, reset_E, sync_reset_E;
+  wire            en_E, reset_E;
   assign en_E = ~stall_E;
-  assign reset_E = reset;
-  assign sync_reset_E     = flush_E;
+  assign reset_E = reset | flush_E;
 
   // REG_execute
   always @(posedge clk, posedge reset_E) begin
-    if (reset_E | sync_reset_E) begin
+    if (reset_E) begin
       pc_E <= 0;
       pc_plus4_E <= 0;
       ExtImm_E <= 0;
@@ -232,14 +229,13 @@ module datapath(
   wire [31:0]     pc_jump;
   wire [31:0]     memData_M;
 
-  wire            en_M, reset_M, sync_reset_M;
+  wire            en_M, reset_M;
   assign en_M = ~stall_M;
-  assign reset_M = reset;
-  assign sync_reset_M    = flush_M;
+  assign reset_M = reset | flush_M;
 
   // REG_memory
   always @(posedge clk, posedge reset_M) begin
-    if (reset_M | sync_reset_M) begin
+    if (reset_M) begin
       pc_plus4_M <= 0;
       pcPlusImm_M <= 0;
       rdout2_M <= 0;
@@ -282,14 +278,13 @@ module datapath(
   reg [31:0]      ExtImm_WB = 0;
   reg [4:0]       rs3_WB = 0;
 
-  wire            en_WB, reset_WB, sync_reset_E;
+  wire            en_WB, reset_WB;
   assign en_WB = ~stall_WB;
-  assign reset_WB = reset;
-  assign sync_reset_E    = flush_WB;
+  assign reset_WB = reset | flush_WB;
 
   // REG_writeback
   always @(posedge clk, posedge reset_WB) begin
-    if (reset_WB | sync_reset_E) begin
+    if (reset_WB) begin
       pc_plus4_WB <= 0;
       memData_WB <= 0;
       ALUResults_WB <= 0;
