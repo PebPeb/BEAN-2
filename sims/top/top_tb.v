@@ -137,7 +137,7 @@ module top_tb();
     #6
     reset <= 1'b0;
 
-    #90
+    #10000
 
     $finish;
   end
