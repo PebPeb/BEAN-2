@@ -149,6 +149,8 @@ module top_tb();
 
     for (i = 0; i < 32; i = i + 1)
       $dumpvars(1, DUT.regFILE.x[i]);
+    for (i = 0; i < 256; i = i + 1)
+      $dumpvars(1, data_mem.mem[i]);
 
 	end
 endmodule
