@@ -283,7 +283,7 @@ module datapath(
       .y(pc_jump));
 
   assign memData_M = memDataRD;
-
+  assign memDataWD = rdout2_M;
 
 
 
