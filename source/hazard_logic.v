@@ -124,6 +124,12 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
     endcase
   end
 
+  always @(negedge clk) begin
+    flush_D_n <= 1'b0;
+    flush_E_n <= 1'b0;
+    flush_M_n <= 1'b0;
+  end
+
   // Clearing and setting the reg_reserve on different edges 
   // allows for CPU to return from stalling 1 cycle faster
 
