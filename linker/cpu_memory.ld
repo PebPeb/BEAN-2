@@ -1,7 +1,7 @@
 MEMORY
 {
   instruction_memory (rx) : ORIGIN = 0x00000000, LENGTH = 256
-  data_memory (rwx) : ORIGIN = 0x00000000, LENGTH = 256
+  data_memory (rwx) : ORIGIN = 0x00010000, LENGTH = 256
 }
 
 SECTIONS
