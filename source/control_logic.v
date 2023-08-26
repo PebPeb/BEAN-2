@@ -53,7 +53,7 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
   wire            pc_not_D;
 
 
-  control_unit control_SEL (
+  Control_Decode control_SEL (
       .opcode(opcode),
       .funct7(funct7),
       .funct3(funct3),
@@ -135,7 +135,7 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
 
 
 
-  // pc_control
+  // PC_Control
   assign pc_SEL_E_cond = pc_cond_E ? {(jump == (1'b1 ^ pc_not_E)) ? 2'b11 : 2'b00} : pc_SEL_E; 
   assign jumping = pc_cond_E & (jump & (1'b1 ^ pc_not_E));
 
@@ -227,7 +227,7 @@ endmodule
 
 
 
-module control_unit(
+module Control_Decode(
     opcode, 
     funct7, 
     funct3,
