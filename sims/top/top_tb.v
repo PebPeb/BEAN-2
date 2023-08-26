@@ -69,7 +69,7 @@ module top_tb();
   );
 
 
-  control_logic control_unit(
+  control_logic Control_Unit(
     .clk(clk), 
     .reset(reset),
     .opcode(opcode),
@@ -96,7 +96,7 @@ module top_tb();
     .flush_M(flush_M), 
     .flush_WB(flush_WB));
 
-  hazard_logic hazard_unit (
+  hazard_logic Hazard_Unit (
     .clk(clk), 
     .reset(reset), 
     .reg_WE(reg_WE_D), 
