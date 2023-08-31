@@ -20,3 +20,4 @@ This CPU includes stalling and flushing in order to handle hazards.
 - GTKWave or a waveform viewer of your choice (All my scripts are set up with GTKWave).
 - 32 bit RISC-V Toolchain ([guide to build the toolchain](https://github.com/riscv/riscv-gnu-toolchain)) for more details on how to compile assembly or C refer to programs folder.
 
+
