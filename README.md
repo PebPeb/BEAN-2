@@ -5,7 +5,9 @@ This project is an implementation of a five staged pipelined CPU utilizing the R
 ## BEAN-2 High Level Block Diagram
 
 The BEAN-2 is broken down into three major components the *Datapath*, *Control Unit*, and the *Hazard Unit*. The *memory hierarchy* is separate in order to accommodate various memory configurations and implementations.
-*
+
+&nbsp
+
 ![BEAN-2](assets/BEAN-2_High_Level_Diagram.png)
 
 ## BEAN-2 System Level Block Diagram
