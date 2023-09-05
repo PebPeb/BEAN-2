@@ -14,6 +14,8 @@ The BEAN-2 is broken down into three major components the *Datapath*, *Control U
 
 ### Datapath
 
+![BEAN-2 System Level Block Diagram](assets/BEAN-2_Datapath.png)
+
 ### Control Unit
 
 ![BEAN-2 Control Unit](assets/BEAN-2_Control_Unit.png)
