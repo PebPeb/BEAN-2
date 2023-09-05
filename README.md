@@ -16,6 +16,8 @@ The BEAN-2 is broken down into three major components the *Datapath*, *Control U
 
 ### Control Unit
 
+![BEAN-2 Control Unit](assets/BEAN-2_Control_Unit.png)
+
 ### Hazard Unit
 
 The **Hazard Unit** handles all pipeline hazards that might occur while in operation. The Hazard Unit implements two different tactics to handle these hazards -- flush and stall. Each pipeline stage is able to be independently flushed or stalled depending on the hazard encountered.
