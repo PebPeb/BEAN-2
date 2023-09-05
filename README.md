@@ -4,14 +4,13 @@ This project is an implementation of a five staged pipelined CPU utilizing the R
 
 ## High Level Block Diagram
 
-The BEAN-2 is broken down into three major components the *Datapath*, *Control Unit*, and the *Hazard Unit*. The *memory hierarchy* is separate in order to accommodate various memory configurations and implementations.
+The BEAN-2 is broken down into three major components the *Datapath*, *Control Unit*, and the *Hazard Unit*. The *memory hierarchy* is separate from the CPU to accommodate modularity and various memory configurations and implementations.
 
-
-![BEAN-2](assets/BEAN-2_High_Level_Diagram.png)
+![BEAN-2 High Level Block Diagram](assets/BEAN-2_High_Level_Diagram.png)
 
 ## System Level Block Diagram
 
-![BEAN-2](assets/BEAN-2.png)
+![BEAN-2 System Level Block Diagram](assets/BEAN-2.png)
 
 ### Datapath
 
@@ -21,9 +20,11 @@ The BEAN-2 is broken down into three major components the *Datapath*, *Control U
 
 The **Hazard Unit** handles all pipeline hazards that might occur while in operation. The Hazard Unit implements two different tactics to handle these hazards -- flush and stall. Each pipeline stage is able to be independently flushed or stalled depending on the hazard encountered.
 
+![BEAN-2 Hazard Unit](assets/BEAN-2_Hazard_Unit.png)
+
 ### Memory Configuration
 
-The BEAN-2 follows a Harvard style architecture utilizing two independent memory caches, instruction and data memory. 
+The BEAN-2 follows a Harvard style architecture utilizing two independent memory caches, instruction and data memory. The CPU and the memory hierarchy are separated for a modular approach to accommodate for independent development. This allows for iterative development of both the memory hierarchy and CPU. Allowing for different styles and approaches to be used with the same CPU design.
 
 ## Requirements
 
