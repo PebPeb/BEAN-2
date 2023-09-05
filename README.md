@@ -14,9 +14,13 @@ The BEAN-2 is broken down into three major components the *Datapath*, *Control U
 
 ### Datapath
 
+The **Datapath** handles the arithmetic and logical operations of the CPU. This component contains the Register file, ALU, and all the additional components for additional connections. The Datapath does not handle any of the instruction decoding and leaves this up to the Control Unit. 
+
 ![BEAN-2 System Level Block Diagram](assets/BEAN-2_Datapath.png)
 
 ### Control Unit
+
+The **Control Unit** handles the instruction decoding, coordination, and sequencing of the system. Mainly operating as the systems brain and controller for the Datapath. The Control Unit enables and switch between components in the Datapath in order to execute a given instruction. For a more in depth description of the instruction types referrer to the [RISC-V Instruction Set Manual](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf).
 
 ![BEAN-2 Control Unit](assets/BEAN-2_Control_Unit.png)
 
