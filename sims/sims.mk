@@ -13,12 +13,11 @@ $(foreach folder,$(SIMS_FOLDERS),$(if $(wildcard $(folder)/tb.mk),$(eval VALID_S
 
 # Build Process for compiling testbenches
 define gen_build_target
-BUILD_DIR := $(1)
+BUILD_DIR_$(BUILD_NAME) := $(1)
 
 .PHONY: build-$(BUILD_NAME)
 build-$(BUILD_NAME):
-	@echo $$(BUILD_DIR)
-	cd $$(BUILD_DIR) && \
+	cd $$(BUILD_DIR_$(BUILD_NAME)) && \
 	iverilog -o $(BUILD_NAME).out -DVCD_DUMP=1 $(TB_SOURCE) $(TB_INCLUDE) && \
 	vvp $(BUILD_NAME).out
 endef
