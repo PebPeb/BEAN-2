@@ -32,20 +32,18 @@ $(foreach x, $(VALID_SIMS_FOLDERS), \
 
 TARGET = 
 
-# build-%:
-# 	@echo $*
-# iverilog -o $(TARGET)/$(TARGET)_tb.out -DVCD_DUMP=1 $(TARGET)/$(TARGET)_tb.v ../source/*.v
-# vvp $(TARGET)/$(TARGET)_tb.out
-
 launch:
 	gtkwave $(TARGET)/$(TARGET)_tb.vcd
 
 gtkw:
 	gtkwave $(TARGET)/$(TARGET)_tb.gtkw
 
+# rm -f $(TARGET)/$(TARGET)_tb.out
 clean:
-	rm -f $(TARGET)/$(TARGET)_tb.out
-	rm -f $(TARGET)/$(TARGET)_tb.vcd
+	$(foreach x,$(SIMS_FOLDERS), \
+		rm -f $(x)*_tb.vcd && \
+		rm -f $(x)*.out \
+	)
 
 
 
