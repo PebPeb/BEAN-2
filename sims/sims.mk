@@ -2,7 +2,6 @@
 # Get all dirs in 
 SIMS_FOLDERS := $(wildcard $(PROJECT_ROOT)/sims/*/)
 
-
 define sourcing_mk 
 include $(1)
 endef
