@@ -32,10 +32,6 @@ $(foreach x, $(VALID_SIMS_FOLDERS), \
 
 TARGET = 
 
-
-print:
-	$(foreach folder,$(VALID_SIMS_FOLDERS),$(info $(folder)))
-
 # build-%:
 # 	@echo $*
 # iverilog -o $(TARGET)/$(TARGET)_tb.out -DVCD_DUMP=1 $(TARGET)/$(TARGET)_tb.v ../source/*.v
