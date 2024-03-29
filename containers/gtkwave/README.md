@@ -5,6 +5,12 @@ docker-compose build
 docker-compose up
 ```
 
+# Bring down
+
+``` bash 
+docker-compose down
+```
+
 ## Ubuntu Common Bugs
 
 After running `docker-compose up` if you receive the following error.
