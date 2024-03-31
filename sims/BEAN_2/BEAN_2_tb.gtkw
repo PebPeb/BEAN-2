@@ -1,0 +1,44 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Sun Mar 31 04:13:01 2024
+[*]
+[dumpfile] "/sims/BEAN_2/BEAN_2_tb.vcd"
+[dumpfile_mtime] "Sun Mar 31 03:36:45 2024"
+[dumpfile_size] 1247997
+[savefile] "/sims/BEAN_2/BEAN_2_tb.gtkw"
+[timestart] 0
+[size] 1920 1136
+[pos] -554 -304
+*-7.658782 599 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] BEAN_2_tb.
+[treeopen] BEAN_2_tb.core.
+[treeopen] BEAN_2_tb.core.Datapath_Unit.
+[sst_width] 235
+[signals_width] 126
+[sst_expanded] 1
+[sst_vpaned_height] 338
+@28
+BEAN_2_tb.core.clk
+BEAN_2_tb.core.reset
+@22
+BEAN_2_tb.instruction_mem.rd[31:0]
+BEAN_2_tb.instruction_mem.a[31:0]
+BEAN_2_tb.pc[31:0]
+@200
+-
+-Memory
+@22
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[0][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[1][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[2][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[3][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[4][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[5][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[6][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[7][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[8][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[9][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[10][31:0]
+BEAN_2_tb.core.Datapath_Unit.regFILE.\x[11][31:0]
+[pattern_trace] 1
+[pattern_trace] 0
