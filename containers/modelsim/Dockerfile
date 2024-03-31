@@ -1,5 +1,5 @@
 
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 # ARG version_modelsim="20.1.1"
 # RUN version_modelsim_std=$(echo "$version_modelsim" | sed 's/\([0-9]\+\)\.\([0-9]\)/\std\.\2/')
