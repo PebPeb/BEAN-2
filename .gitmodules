@@ -1,0 +1,3 @@
+[submodule "programs/RISC-V-Programs"]
+	path = programs/RISC-V-Programs
+	url = https://github.com/PebPeb/RISC-V-Programs
