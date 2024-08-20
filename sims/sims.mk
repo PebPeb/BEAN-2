@@ -25,15 +25,15 @@ endef
 
 define gtkwave_sim_target 
 BUILD_DIR_$(BUILD_NAME) := $(1)
-VCD_FILE := $(wildcard $(BUILD_DIR_$(BUILD_NAME))*.vcd)
 
 ifneq ($(strip $(wildcard $(BUILD_DIR_$(BUILD_NAME))*.vcd)),)
 .PHONY: gtk-$(BUILD_NAME)
 gtk-$(BUILD_NAME):
-	@echo $(VCD_FILE)
+	gtkwave $(strip $(wildcard $(BUILD_DIR_$(BUILD_NAME))*.vcd))
 endif
 endef
 
+# @echo $(notdir $(wildcard $(BUILD_DIR_$(BUILD_NAME))*.vcd))
 # ------------------------------------------------------------ #
 
 # Make Process
