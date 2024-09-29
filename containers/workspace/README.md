@@ -3,6 +3,7 @@
 ``` bash
 docker-compose build
 docker-compose up
+docker-compose up -d --build
 ```
 
 # Bring down
