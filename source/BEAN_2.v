@@ -42,7 +42,6 @@ module BEAN_2 (clk, reset, Instr, memDataRD, dmem_WE,
   wire        stall_F, stall_D, stall_E, stall_M, stall_WB;
   wire        flush_F, flush_D, flush_E, flush_M, flush_WB;
   wire        reg_WE_D;    
-  wire        jumping;
 
   datapath Datapath_Unit (
     .clk(clk), 
@@ -87,7 +86,7 @@ module BEAN_2 (clk, reset, Instr, memDataRD, dmem_WE,
     .funct7(funct7), 
     .funct3(funct3), 
     .jump(jump), 
-    .jumping(jumping),
+    .jumping(),
     .ALU_SEL(ALU_SEL), 
     .dmem_SEL(dmem_SEL), 
     .imm_SEL(imm_SEL), 
