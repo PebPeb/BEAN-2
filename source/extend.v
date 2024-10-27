@@ -24,7 +24,7 @@ module extend(Instr, ImmSrc, ExtImm);
 			3'b001:	ExtImm <= {{21{Instr[24]}}, Instr[23:18], Instr[4:0]};					// S-Type
 			3'b010:	ExtImm <= {{20{Instr[24]}}, Instr[0], Instr[23:18], Instr[4:1], 1'b0};	// B-Type
 			3'b011:	ExtImm <= {{21{Instr[24]}}, Instr[23:13]};								// I-Type
-			3'b100:	ExtImm <= {{13{Instr[24]}}, Instr[12:5], Instr[13], Instr[23:14], 1'b0};// J-Type
+			3'b100:	ExtImm <= {{12{Instr[24]}}, Instr[12:5], Instr[13], Instr[23:14], 1'b0};// J-Type
 			default:ExtImm <= {32{1'b0}};
 		endcase
 	end
