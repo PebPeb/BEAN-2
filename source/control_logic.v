@@ -355,6 +355,7 @@ module Control_Decode(
             3'b101:       ALU_SEL   <= 4'b1100;   // BGE
             3'b110:       ALU_SEL   <= 4'b1001;   // BLTU
             3'b111:       ALU_SEL   <= 4'b1011;   // BGEU
+            default:;
           endcase
         end
       7'b0000011:   // Load instructions
@@ -374,6 +375,7 @@ module Control_Decode(
             3'b010:       dmem_SEL  <= 3'b000;    // LW
             3'b100:       dmem_SEL  <= 3'b010;    // LBU
             3'b101:       dmem_SEL  <= 3'b001;    // LHU
+            default:;
           endcase
         end
       7'b0100011:   // Store instructions
@@ -391,6 +393,7 @@ module Control_Decode(
             3'b000:       dmem_SEL  <= 3'b010;    // SB
             3'b001:       dmem_SEL  <= 3'b001;    // SH
             3'b010:       dmem_SEL  <= 3'b000;    // SW
+            default:;
           endcase
         end
       7'b0010011:   // Immediate Arithmetic 
@@ -415,11 +418,13 @@ module Control_Decode(
             3'b001:
               case (funct7)
                 7'b0000000:   ALU_SEL   <= 4'b0101;   // SLLI
+                default:;
               endcase
             3'b101:     
               case (funct7)
                 7'b0000000:   ALU_SEL   <= 4'b0110;   // SRLI
                 7'b0100000:   ALU_SEL   <= 4'b0111;   // SRAI
+                default:;
               endcase
           endcase
         end
@@ -446,12 +451,15 @@ module Control_Decode(
                 3'b101:   ALU_SEL   <= 4'b0110;   // SRL
                 3'b110:   ALU_SEL   <= 4'b0011;   // OR
                 3'b111:   ALU_SEL   <= 4'b0010;   // AND
+                default:;
               endcase
             7'b0100000:
               case (funct3)
                 3'b000:   ALU_SEL   <= 4'b0001;   // SUB
                 3'b101:   ALU_SEL   <= 4'b0111;   // SRA
+                default:;
               endcase
+            default:;
           endcase 
         end  
       default:
