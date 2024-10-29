@@ -127,9 +127,9 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   end
 
   always @(posedge clk) begin
-    if (flush_D_n) flush_D_n <= 1'b0;
-    if (flush_E_n) flush_E_n <= 1'b0;
-    if (flush_M_n) flush_M_n <= 1'b0;
+    if (flush_D_n) flush_D_n = 1'b0;
+    if (flush_E_n) flush_E_n = 1'b0;
+    if (flush_M_n) flush_M_n = 1'b0;
   end
 
   // Clearing and setting the reg_reserve on different edges 
@@ -184,7 +184,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   // REG_execute
   always @(posedge clk, posedge reset) begin
-    if (reset) begin
+    if (reset | flush_E_n) begin
       rs3_E <= 0;
       reg_WE_E <= 0;
     end
@@ -192,10 +192,6 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       rs3_E <= rs3;
       reg_WE_E <= reg_WE;
     end
-  end
-  always @(posedge flush_E_n) begin
-    rs3_E <= 0;
-    reg_WE_E <= 0;
   end
 
   // ----------------------------- //
@@ -210,7 +206,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   // REG_memory
   always @(posedge clk, posedge reset) begin
-    if (reset) begin
+    if (reset | flush_M_n) begin
       rs3_M <= 0;
       reg_WE_M <= 0;
     end
@@ -219,11 +215,6 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       reg_WE_M <= reg_WE_E;
     end
   end
-  always @(posedge flush_M_n) begin
-    rs3_M <= 0;
-    reg_WE_M <= 0;
-  end
-
 
   // // ----------------------------- //
   // // Write Back
@@ -237,7 +228,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   // REG_writeback
   always @(posedge clk, posedge reset) begin
-    if (reset) begin
+    if (reset | flush_WB_n) begin
       reg_WE_WB <= 0;
       rs3_WB <= 0;
     end
@@ -246,10 +237,5 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
       rs3_WB <= rs3_M;
     end
   end
-  always @(posedge flush_WB_n) begin
-    reg_WE_WB <= 0;
-    rs3_WB <= 0;
-  end
-
 
 endmodule
