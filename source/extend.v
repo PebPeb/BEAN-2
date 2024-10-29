@@ -20,12 +20,12 @@ module extend(Instr, ImmSrc, ExtImm);
 	
 	always @(ImmSrc, Instr) begin
 		case (ImmSrc)
-			3'b000:	ExtImm <= {Instr[24:5], {12{1'b0}}};									// U-Type
-			3'b001:	ExtImm <= {{21{Instr[24]}}, Instr[23:18], Instr[4:0]};					// S-Type
-			3'b010:	ExtImm <= {{20{Instr[24]}}, Instr[0], Instr[23:18], Instr[4:1], 1'b0};	// B-Type
-			3'b011:	ExtImm <= {{21{Instr[24]}}, Instr[23:13]};								// I-Type
-			3'b100:	ExtImm <= {{12{Instr[24]}}, Instr[12:5], Instr[13], Instr[23:14], 1'b0};// J-Type
-			default:ExtImm <= {32{1'b0}};
+			3'b000:	ExtImm = {Instr[24:5], {12{1'b0}}};									    // U-Type
+			3'b001:	ExtImm = {{21{Instr[24]}}, Instr[23:18], Instr[4:0]};					// S-Type
+			3'b010:	ExtImm = {{20{Instr[24]}}, Instr[0], Instr[23:18], Instr[4:1], 1'b0};	// B-Type
+			3'b011:	ExtImm = {{21{Instr[24]}}, Instr[23:13]};								// I-Type
+			3'b100:	ExtImm = {{12{Instr[24]}}, Instr[12:5], Instr[13], Instr[23:14], 1'b0}; // J-Type
+			default:ExtImm = {32{1'b0}};
 		endcase
 	end
 
