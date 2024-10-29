@@ -94,8 +94,8 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
 
 
   // REG_execute
-  always @(posedge clk, posedge reset) begin
-    if (reset) begin
+  always @(posedge clk, posedge reset, posedge flush_E) begin
+    if (reset | flush_E) begin
       dmem_SEL_E <= 0;
       dmem_WE_E <= 0;
       reg_WE_E <= 0;
@@ -120,20 +120,6 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
       pc_not_E <= pc_not_D;
     end
   end
-  always @(posedge flush_E) begin
-    dmem_SEL_E <= 0;
-    dmem_WE_E <= 0;
-    reg_WE_E <= 0;
-    rs1_SEL_E <= 0;
-    rs2_SEL_E <= 0;
-    reg_SEL_E <= 0;
-    pc_SEL_E <= 0;
-    ALU_SEL_E <= 0;
-    pc_cond_E <= 0;
-    pc_not_E <= 0; 
-  end
-
-
 
   // PC_Control
   assign pc_SEL_E_cond = pc_cond_E ? {(jump == (1'b1 ^ pc_not_E)) ? 2'b11 : 2'b00} : pc_SEL_E; 
@@ -158,8 +144,8 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
   assign en_M = ~stall_M;
 
   // REG_memory
-  always @(posedge clk, posedge reset) begin
-    if (reset) begin
+  always @(posedge clk, posedge reset, posedge flush_M) begin
+    if (reset | flush_M) begin
       dmem_SEL_M <= 0;
       dmem_WE_M <= 0;
       reg_WE_M <= 0;
@@ -173,13 +159,6 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
       reg_SEL_M <= reg_SEL_E;
       pc_SEL_M <= pc_SEL_E_cond;
     end
-  end
-  always @(posedge flush_M) begin
-    dmem_SEL_M <= 0;
-    dmem_WE_M <= 0;
-    reg_WE_M <= 0;
-    reg_SEL_M <= 0;
-    pc_SEL_M <= 0;
   end
 
   assign dmem_SEL = dmem_SEL_M;
@@ -196,7 +175,7 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
   assign en_WB = ~stall_WB;
 
   // REG_writeback
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk, posedge reset, posedge flush_WB) begin
     if (reset) begin
       reg_WE_WB <= 0;
       reg_SEL_WB <= 0;
@@ -205,10 +184,6 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
       reg_WE_WB <= reg_WE_M;
       reg_SEL_WB <= reg_SEL_M;
     end
-  end
-  always @(posedge flush_WB) begin
-    reg_WE_WB <= 0;
-    reg_SEL_WB <= 0;   
   end
 
   assign reg_WE = reg_WE_WB;
