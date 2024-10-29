@@ -6,4 +6,4 @@
 *.out
 *.vcd
 *.xlsx#
-
+obj_dir/
