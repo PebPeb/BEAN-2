@@ -206,7 +206,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   assign enable_M       = ~stall_M_n;
 
   // REG_memory
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if (reset | flush_M_n) begin
       rs3_M <= 0;
       reg_WE_M <= 0;
@@ -228,7 +228,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   assign enable_WB       = ~stall_WB_n;
 
   // REG_writeback
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if (reset | flush_WB_n) begin
       reg_WE_WB <= 0;
       rs3_WB <= 0;

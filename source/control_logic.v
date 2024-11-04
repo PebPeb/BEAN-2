@@ -94,7 +94,7 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
 
 
   // REG_execute
-  always @(posedge clk, posedge reset, posedge flush_E) begin
+  always @(posedge clk) begin
     if (reset | flush_E) begin
       dmem_SEL_E <= 0;
       dmem_WE_E <= 0;
@@ -144,7 +144,7 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
   assign en_M = ~stall_M;
 
   // REG_memory
-  always @(posedge clk, posedge reset, posedge flush_M) begin
+  always @(posedge clk) begin
     if (reset | flush_M) begin
       dmem_SEL_M <= 0;
       dmem_WE_M <= 0;
@@ -175,7 +175,7 @@ module control_logic(opcode, funct7, funct3, jump, jumping, ALU_SEL, dmem_SEL,
   assign en_WB = ~stall_WB;
 
   // REG_writeback
-  always @(posedge clk, posedge reset, posedge flush_WB) begin
+  always @(posedge clk) begin
     if (reset) begin
       reg_WE_WB <= 0;
       reg_SEL_WB <= 0;

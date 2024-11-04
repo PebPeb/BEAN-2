@@ -68,7 +68,8 @@ module datapath(
 
 
   // REG_fetch
-  always @(posedge clk, posedge reset, posedge flush_F) begin
+  //  always @(posedge clk, posedge reset, posedge flush_F) begin
+  always @(posedge clk) begin
     if (reset | flush_F) begin
       pc_next <= 0;
     end
@@ -101,7 +102,8 @@ module datapath(
   assign en_D = ~stall_D;
 
   // REG_decode
-  always @(posedge clk, posedge reset, posedge flush_D) begin
+  // always @(posedge clk, posedge reset, posedge flush_D) begin
+  always @(posedge clk) begin
     if (reset | flush_D) begin
       pc_plus4_D <= 0;
       pc_D <= 0;
@@ -159,7 +161,7 @@ module datapath(
   assign en_E = ~stall_E;
 
   // REG_execute
-  always @(posedge clk, posedge reset, posedge flush_E) begin
+  always @(posedge clk) begin
     if (reset | flush_E) begin
       pc_E <= 0;
       pc_plus4_E <= 0;
@@ -222,7 +224,7 @@ module datapath(
   assign en_M = ~stall_M;
 
   // REG_memory
-  always @(posedge clk, posedge reset, posedge flush_M) begin
+  always @(posedge clk) begin
     if (reset | flush_M) begin
       pc_plus4_M <= 0;
       pcPlusImm_M <= 0;
@@ -264,7 +266,7 @@ module datapath(
   assign en_WB = ~stall_WB;
 
   // REG_writeback
-  always @(posedge clk, posedge reset, posedge flush_WB) begin
+  always @(posedge clk) begin
     if (reset | flush_WB) begin
       pc_plus4_WB <= 0;
       memData_WB <= 0;
