@@ -127,9 +127,9 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   // Set on rising edge
   always @(posedge clk) begin
     if (reg_WE_WB)
-      reg_reserve[rs3_WB] = 1'b0;
+      reg_reserve[rs3_WB] <= 1'b0;
     if (reg_WE & (rs3 != 0)) 
-      reg_reserve[rs3] = 1'b1;
+      reg_reserve[rs3] <= 1'b1;
   end
   // Clear on falling edge
   // always @(negedge clk) begin
