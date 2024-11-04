@@ -61,6 +61,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   reg [1:0]  current_state = OPERATIONAL_STATE;
 
   // State Transition
+
   always @(posedge clk) begin
     case (current_state)
       OPERATIONAL_STATE:
@@ -71,15 +72,19 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
           if (reg_WE_M)
             reg_reserve[rs3_M] <= 1'b0;
         end
-        else if (rd_wr_collision)
+        else if (rd_wr_collision) begin
           current_state <= COLLISION_STATE;
-        else
+        end
+        else begin
           current_state <= OPERATIONAL_STATE;
+        end
       JUMP_STATE:
-        if (rd_wr_collision)
-            current_state <= COLLISION_STATE;
-        else
+        if (rd_wr_collision) begin
+          current_state <= COLLISION_STATE;
+        end
+        else begin
           current_state <= OPERATIONAL_STATE;
+        end
       COLLISION_STATE:
         if (jumping) begin
           current_state <= JUMP_STATE;
@@ -88,49 +93,32 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
           if (reg_WE_M)
             reg_reserve[rs3_M] <= 1'b0;
         end
-        else if (rd_wr_collision)
+        else if (rd_wr_collision) begin
           current_state <= COLLISION_STATE;
-        else
+        end
+        else begin
           current_state <= OPERATIONAL_STATE;
-      default:;
-    endcase
-  end
-
-  // State Logic
-  always @(current_state) begin
-
-    case (current_state)
-      OPERATIONAL_STATE:
-        begin
-          flush_D_n = 1'b0;
-          flush_E_n = 1'b0;
-          flush_M_n = 1'b0;
-        end
-      JUMP_STATE:
-        begin
-          // if (reg_WE_E)
-          //   reg_reserve[rs3_E] = 1'b0;
-          // if (reg_WE_M)
-          //   reg_reserve[rs3_M] = 1'b0;
-            
-          flush_D_n = 1'b1;
-          flush_E_n = 1'b1;
-          flush_M_n = 1'b1;
-        end
-      COLLISION_STATE:
-        begin
-          flush_D_n = 1'b0;
-          flush_E_n = 1'b1;
-          flush_M_n = 1'b0;
         end
       default:;
     endcase
   end
-  
-  always @(posedge clk) begin
-    if (flush_D_n) flush_D_n = 1'b0;
-    if (flush_E_n) flush_E_n = 1'b0;
-    if (flush_M_n) flush_M_n = 1'b0;
+
+  always @(*) begin
+    if (jumping) begin        // If jumping the next cycle we need to flush
+      flush_D_n = 1'b1;       // Decode, Execute, and Memory
+      flush_E_n = 1'b1;
+      flush_M_n = 1'b1;
+    end
+    else if (rd_wr_collision) begin
+      flush_D_n = 1'b0;
+      flush_E_n = 1'b1;
+      flush_M_n = 1'b0;
+    end
+    else begin
+      flush_D_n = 1'b0;
+      flush_E_n = 1'b0;
+      flush_M_n = 1'b0;
+    end
   end
 
   // Clearing and setting the reg_reserve on different edges 
@@ -138,14 +126,14 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
 
   // Set on rising edge
   always @(posedge clk) begin
+    if (reg_WE_WB)
+      reg_reserve[rs3_WB] = 1'b0;
     if (reg_WE & (rs3 != 0)) 
-      reg_reserve[rs3] <= 1'b1;
+      reg_reserve[rs3] = 1'b1;
   end
   // Clear on falling edge
-  always @(negedge clk) begin
-    if (reg_WE_WB)
-      reg_reserve[rs3_WB] <= 1'b0;
-  end
+  // always @(negedge clk) begin
+  // end
 
   // Continuesly checking for a read write collision
   always @(*) begin
@@ -184,7 +172,7 @@ module hazard_logic(clk, reset, reg_WE, reg_RD, rs1, rs2, rs3, jumping,
   assign enable_E       = ~stall_E_n;
 
   // REG_execute
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if (reset | flush_E_n) begin
       rs3_E <= 0;
       reg_WE_E <= 0;
