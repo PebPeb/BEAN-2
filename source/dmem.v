@@ -25,12 +25,19 @@ module dmem(a, rd, wd, clk, we, mode, reset);
 	integer i;
 	initial begin
 		for (i = 0; i < 256; i = i + 1) begin
-			mem[i] <= 8'h00;
+			mem[i] = 8'h00;
 		end		
 	end
 		
 	always @(posedge clk) begin
-		if (we) begin
+		if (reset) begin
+			/* verilator lint_off BLKSEQ */
+			for (i = 0; i < 256; i = i + 1) begin
+				mem[i] = 8'h00;
+			end	
+			/* verilator lint_on BLKSEQ */
+		end
+		else if (we) begin
 			case (mode)
 				3'b000:	{mem[a], mem[a + 1], mem[a + 2], mem[a + 3]} <= wd;	// 4 byte mode (32 bit)
 				3'b001:	{mem[a], mem[a + 1]} <= wd[15:0];					// 2 byte mode (16 bit)
@@ -42,23 +49,15 @@ module dmem(a, rd, wd, clk, we, mode, reset);
 		end
 	end
 	
-	always @(posedge clk, a, mode) begin
+	always @(*) begin
 		case (mode)
-			3'b000: rd <= {mem[a], mem[a + 1], mem[a + 2], mem[a + 3]};	// 4 byte mode (32 bit)
-			3'b001: rd <= {{16{1'b0}}, mem[a], mem[a + 1]};				// 2 byte not signextended
-			3'b101:	rd <= {{16{mem[a][7]}}, mem[a], mem[a + 1]};		// 2 byte signextended
-			3'b010: rd <= {{24{1'b0}}, mem[a]};							// 1 byte not signextended
-			3'b110: rd <= {{24{mem[a][7]}}, mem[a]};					// 1 byte signextended
-			default:rd <= {mem[a], mem[a + 1], mem[a + 2], mem[a + 3]};	// 4 byte mode (32 bit)
+			3'b000: rd = {mem[a], mem[a + 1], mem[a + 2], mem[a + 3]};	// 4 byte mode (32 bit)
+			3'b001: rd = {{16{1'b0}}, mem[a], mem[a + 1]};				// 2 byte not signextended
+			3'b101:	rd = {{16{mem[a][7]}}, mem[a], mem[a + 1]};		// 2 byte signextended
+			3'b010: rd = {{24{1'b0}}, mem[a]};							// 1 byte not signextended
+			3'b110: rd = {{24{mem[a][7]}}, mem[a]};					// 1 byte signextended
+			default:rd = {mem[a], mem[a + 1], mem[a + 2], mem[a + 3]};	// 4 byte mode (32 bit)
 		endcase
 	end
-	
-	always @(posedge clk, reset) begin
-		if (reset) begin
-			for (i = 0; i < 256; i = i + 1) begin
-				mem[i] <= 8'h00;
-			end	
-		end
-	end	
 	
 endmodule
