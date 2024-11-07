@@ -6,4 +6,7 @@
 *.out
 *.vcd
 *.xlsx#
+
+# Verilator
+*.o
 obj_dir/
