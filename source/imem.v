@@ -24,7 +24,8 @@ module imem(a, rd);
 	initial
 		$readmemh(INITIAL_DATA_PATH, mem);
 	
-	
+	/* verilator lint_off WIDTH */
 	assign rd = mem[a[31:2]];
+	/* verilator lint_off WIDTH */
 
 endmodule

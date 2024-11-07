@@ -28,7 +28,7 @@ TB_INCLUDE =
 ###########################
 
 # List of modules to compile
-V_COMPILE = BEAN_2 dmem imem
+V_COMPILE = BEAN_2 imem dmem
 
 V_SOURCE_BEAN_2 = $(PDIR)/source/BEAN_2.v \
 	$(PDIR)/source/alu32.v \

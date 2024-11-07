@@ -23,3 +23,5 @@ TB_SOURCE = BEAN_2_tb.v
 # List of files that build up verilog module under test
 TB_INCLUDE = $(PDIR)/source/*.v
 
+V_COMPILE = 
+
