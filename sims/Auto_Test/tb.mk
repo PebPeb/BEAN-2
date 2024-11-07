@@ -21,7 +21,16 @@ PDIR = $(PROJECT_ROOT)/$(RELATIVE_PROJECT_PATH)
 
 # List of files that build up verilog module under test
 TB_TOP_MODULE = BEAN_2
-TB_INCLUDE = $(PDIR)/source/BEAN_2.v \
+TB_INCLUDE = 
+
+###########################
+######## Verilator ########
+###########################
+
+# List of modules to compile
+V_COMPILE = BEAN_2 dmem imem
+
+V_SOURCE_BEAN_2 = $(PDIR)/source/BEAN_2.v \
 	$(PDIR)/source/alu32.v \
 	$(PDIR)/source/adder.v \
 	$(PDIR)/source/control_logic.v \
@@ -34,6 +43,8 @@ TB_INCLUDE = $(PDIR)/source/BEAN_2.v \
 	$(PDIR)/source/mux4.v \
 	$(PDIR)/source/regfile.v  
 
-# Verilator Only
+V_SOURCE_dmem = $(PDIR)/source/dmem.v
 
-TB_SOURCE = BEAN_2_tb.cpp 
+V_SOURCE_imem = $(PDIR)/source/imem.v
+
+V_TB = BEAN_2_tb.cpp 
