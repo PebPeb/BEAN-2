@@ -18,6 +18,7 @@ PDIR = $(PROJECT_ROOT)/$(RELATIVE_PROJECT_PATH)
 # List of Testbench Source Files
 # TB_SOURCE root directory is the default output of VeroMake
 # Current Valid sources are .v & .cpp
+TB_SOURCE = 
 
 # List of files that build up verilog module under test
 TB_TOP_MODULE = BEAN_2
