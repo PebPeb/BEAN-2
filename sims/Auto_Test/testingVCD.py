@@ -2,17 +2,15 @@
 from vcd.reader import tokenize, TokenKind
 
 def main():
-    root = buildModuleTree()
+    # vcd_file_path = "BEAN_2_tb.vcd"
+    # root = buildModuleTree(vcd_file_path)
+    pass
     
-def buildModuleTree():
-    # Define the file path to your VCD file
-    vcd_file_path = "BEAN_2_tb.vcd"
-
+def buildModuleTree(vcd_file_path):
     root = None
     currentModule = None
 
-    # Open the VCD file in binary mode ('rb') and parse it
-    with open(vcd_file_path, 'rb') as f:  # Use 'rb' to open in binary mode
+    with open(vcd_file_path, 'rb') as f:  
         for token in tokenize(f):
             if token.kind == TokenKind.SCOPE:
                 if not root:
