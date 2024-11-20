@@ -1,12 +1,9 @@
 
 from vcd.reader import tokenize, TokenKind
-import time
-
 
 def main():
-    buildModuleTree()
+    root = buildModuleTree()
     
-
 def buildModuleTree():
     # Define the file path to your VCD file
     vcd_file_path = "BEAN_2_tb.vcd"
@@ -32,11 +29,7 @@ def buildModuleTree():
                 currentModule.addSignal(Wire(token.data.reference, token.data.size, token.data.id_code))
             elif token.kind == TokenKind.ENDDEFINITIONS:
                 break
-            
-    
-    print(root.tree_str())
-
-
+    return root
             
 # Module Object            
 class Module():
