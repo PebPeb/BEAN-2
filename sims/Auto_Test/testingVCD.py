@@ -1,15 +1,22 @@
 
 from vcd.reader import tokenize, TokenKind
+from intervaltree import IntervalTree
 
 def main():
-    # vcd_file_path = "BEAN_2_tb.vcd"
-    # root = buildModuleTree(vcd_file_path)
+    vcd_file_path = "BEAN_2_tb.vcd"
+    root = buildModuleTree(vcd_file_path)
+    
+    for i in range(10):
+        print(root.getWireByID("#").getValueAtTime(i))
+        
     pass
     
 def buildModuleTree(vcd_file_path):
     root = None
     currentModule = None
-
+    
+    time = None
+    i = 0
     with open(vcd_file_path, 'rb') as f:  
         for token in tokenize(f):
             if token.kind == TokenKind.SCOPE:
@@ -24,9 +31,18 @@ def buildModuleTree(vcd_file_path):
                 else:
                     currentModule = currentModule.getParentModule()
             elif token.kind == TokenKind.VAR:
-                currentModule.addSignal(Wire(token.data.reference, token.data.size, token.data.id_code))
+                myWire = Wire(token.data.reference, token.data.size, token.data.id_code)
+                currentModule.addSignal(myWire)
+                root.addRootAllSignals(myWire)
             elif token.kind == TokenKind.ENDDEFINITIONS:
-                break
+                pass
+            elif token.kind == TokenKind.CHANGE_TIME:
+                time = token.data
+            elif token.kind == TokenKind.CHANGE_SCALAR:
+                myWire = root.getWireByID(token.data.id_code)
+                if myWire:
+                    myWire.appendValueChange(time, token.data.value)
+
     return root
             
 # Module Object            
@@ -48,7 +64,7 @@ class Module():
                 validType = False
                 raise TypeError("The signals must be a list of instances of the Wire class.")  
         if validType:
-            self.signals = signals[:]           # Copy List not pointer
+            self.signals = dict()           # Copy List not pointer
             
             
         validType = True
@@ -58,6 +74,8 @@ class Module():
                 raise TypeError("The submodules must be a list of instances of the Module class.")  
         if validType:
             self.submodules = submodules[:]
+            
+        self.__allWires = dict()
         
     def setParentModule(self, parentModule):
         self.parentModule = parentModule
@@ -67,9 +85,19 @@ class Module():
         
     def addSignal(self, signal):
         if isinstance(signal, Wire):
-            self.signals.append(signal)
+            self.signals[str(signal.identifier)] = signal
         else:
             raise TypeError("The signal must be an instance of the Wire class.")
+    
+    def addRootAllSignals(self, signal):
+        if isinstance(signal, Wire):
+            self.__allWires[str(signal.identifier)] = signal
+        else:
+            raise TypeError("The signal must be an instance of the Wire class.")
+        
+    def getWireByID(self, id):
+        return self.__allWires.get(id, None)
+    
     
     # Set submodules parent module to current module
     def addSubmodule(self, submodule):    
@@ -144,6 +172,16 @@ class Wire():
         self.width = width
         self.identifier = identifier
         
+        self.__value = IntervalTree()
+        
+    def setValueChange(self, start_time, end_time, value):
+        self.__value[start_time:end_time] = value
+        
+    def appendValueChange(self, start_time, value):
+        self.setValueChange(start_time, float('inf'), value)
+        
+    def getValueAtTime(self, time):
+        return next(iter(self.__value.at(time))).data
         
     def __repr__(self):
         returnStr = ""
