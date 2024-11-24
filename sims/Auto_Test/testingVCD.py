@@ -1,15 +1,20 @@
 
 from vcd.reader import tokenize, TokenKind
-from intervaltree import IntervalTree
+import bisect
 
-def main():
+def __test_function():
     vcd_file_path = "BEAN_2_tb.vcd"
     root = buildModuleTree(vcd_file_path)
     
-    for i in range(10):
-        print(root.getWireByID("#").getValueAtTime(i))
-        
-    pass
+    
+    
+    myWire = root.getWireByID("x!")
+    for i in range(40):
+        print("Time: " + str(i) + "  " + str(myWire.name) + " " + str(myWire.getValueAtTime(i)))
+    
+    print(root.getSubmodule("TOP.BEAN_2.Control_Unit"))
+    print(root.getWireByName("TOP.BEAN_2.Control_Unit.ALU_SEL"))
+
     
 def buildModuleTree(vcd_file_path):
     root = None
@@ -19,12 +24,21 @@ def buildModuleTree(vcd_file_path):
     i = 0
     with open(vcd_file_path, 'rb') as f:  
         for token in tokenize(f):
-            if token.kind == TokenKind.SCOPE:
+            if token.kind == TokenKind.CHANGE_SCALAR or token.kind == TokenKind.CHANGE_VECTOR or token.kind == TokenKind.CHANGE_REAL or token.kind == TokenKind.CHANGE_STRING:
+                myWire = root.getWireByID(token.data.id_code)
+                if myWire:
+                    myWire.appendValueChange(time, token.data.value)
+                    
+            elif token.kind == TokenKind.CHANGE_TIME:
+                time = token.data
+            elif token.kind == TokenKind.SCOPE:
                 if not root:
-                    root = Module(token.data.ident)
+                    root = RootModule(token.data.ident)
                     currentModule = root
+                    root.addRootAllSubmodules(root)
                 else:
                     currentModule = currentModule.addSubmodule(Module(token.data.ident))
+                    root.addRootAllSubmodules(currentModule)
             elif token.kind == TokenKind.UPSCOPE:
                 if currentModule == root:
                     pass
@@ -33,18 +47,16 @@ def buildModuleTree(vcd_file_path):
             elif token.kind == TokenKind.VAR:
                 myWire = Wire(token.data.reference, token.data.size, token.data.id_code)
                 currentModule.addSignal(myWire)
-                root.addRootAllSignals(myWire)
+                
+                # Easier to use 
+                root.addRootAllSignals(myWire, currentModule)
             elif token.kind == TokenKind.ENDDEFINITIONS:
                 pass
-            elif token.kind == TokenKind.CHANGE_TIME:
-                time = token.data
-            elif token.kind == TokenKind.CHANGE_SCALAR:
-                myWire = root.getWireByID(token.data.id_code)
-                if myWire:
-                    myWire.appendValueChange(time, token.data.value)
 
     return root
             
+    
+
 # Module Object            
 class Module():
     def __init__(self, name, parentModule=None, signals=[], submodules=[]):
@@ -74,8 +86,7 @@ class Module():
                 raise TypeError("The submodules must be a list of instances of the Module class.")  
         if validType:
             self.submodules = submodules[:]
-            
-        self.__allWires = dict()
+    
         
     def setParentModule(self, parentModule):
         self.parentModule = parentModule
@@ -87,17 +98,7 @@ class Module():
         if isinstance(signal, Wire):
             self.signals[str(signal.identifier)] = signal
         else:
-            raise TypeError("The signal must be an instance of the Wire class.")
-    
-    def addRootAllSignals(self, signal):
-        if isinstance(signal, Wire):
-            self.__allWires[str(signal.identifier)] = signal
-        else:
-            raise TypeError("The signal must be an instance of the Wire class.")
-        
-    def getWireByID(self, id):
-        return self.__allWires.get(id, None)
-    
+            raise TypeError("The signal must be an instance of the Wire class.")     
     
     # Set submodules parent module to current module
     def addSubmodule(self, submodule):    
@@ -163,8 +164,8 @@ class Module():
                     depth += 1
                     
         return returnStr
+   
     
- 
 # Wire Object
 class Wire():
     def __init__(self, name, width, identifier):
@@ -172,16 +173,19 @@ class Wire():
         self.width = width
         self.identifier = identifier
         
-        self.__value = IntervalTree()
+        self.__value = dict()
         
     def setValueChange(self, start_time, end_time, value):
-        self.__value[start_time:end_time] = value
-        
+        # self.__value[start_time:end_time] = value
+        self.__value[start_time] = value
+                
     def appendValueChange(self, start_time, value):
         self.setValueChange(start_time, float('inf'), value)
         
     def getValueAtTime(self, time):
-        return next(iter(self.__value.at(time))).data
+        idx = bisect.bisect_right(list(self.__value.keys()), time) - 1
+        if idx >= 0:
+            return self.__value[list(self.__value.keys())[idx]]
         
     def __repr__(self):
         returnStr = ""
@@ -191,7 +195,45 @@ class Wire():
         else:
             returnStr += f"{f'wire':<15}"
         return returnStr 
+    
 
+class RootModule(Module):
+    def __init__(self, name, parentModule=None, signals=[], submodules=[]):
+        super().__init__(name, parentModule, signals, submodules)
+            
+        self.__allWiresID = dict()
+        self.__allModules = dict()
+        self.__allWires = dict()
+    
+
+    def addRootAllSignals(self, signal: Wire, currentModule: Module):
+        if isinstance(signal, Wire):
+            self.__allWiresID[str(signal.identifier)] = signal
+            moduleKey = [key for key, value in self.__allModules.items() if value == currentModule]
+            self.__allWires[moduleKey[0] + "." + signal.name] = signal            
+        else:
+            raise TypeError("The signal must be an instance of the Wire class.")
+            
+    def addRootAllSubmodules(self, submodule):
+        if isinstance(submodule, Module):
+            modulePath = submodule.name
+            parentModule = submodule.getParentModule()
+            while(parentModule != None):
+                modulePath = str(parentModule.name) + "." + modulePath
+                parentModule = parentModule.getParentModule()
+            self.__allModules[modulePath] = submodule
+        else:
+            raise TypeError("The submodule must be an instance of the Module class.")  
+    
+    def getWireByID(self, id):
+        return self.__allWiresID.get(id, None)
+    
+    def getWireByName(self, name):
+        return self.__allWires.get(name, None)
+    
+    def getSubmodule(self, moduleName: str):
+        return self.__allModules[moduleName]
+ 
 
 if __name__ == "__main__":
-    main()
+    __test_function()
